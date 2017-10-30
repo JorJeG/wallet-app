@@ -1,10 +1,11 @@
 'use strict';
 
 const fs = require('fs');
+const Koa = require('koa');
+const path = require('path');
 const http = require('http');
 const https = require('https');
-const path = require('path');
-const Koa = require('koa');
+const config = require('config');
 const serve = require('koa-static');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser')();
@@ -31,7 +32,8 @@ const TransactionsModel = require('source/models/transactions');
 const getTransactionsController = require('./controllers/transactions/get-transactions');
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/school-wallet', { useMongoClient: true });
+
+mongoose.connect(config.get('db.url'), {useMongoClient: true});
 mongoose.Promise = global.Promise;
 
 const app = new Koa();
@@ -115,7 +117,7 @@ app.use(bodyParser);
 app.use(router.routes());
 app.use(serve('./public'));
 
-const listenCallback = function() {
+const listenCallback = function () {
 	const {
 		port
 	} = this.address();
@@ -123,12 +125,14 @@ const listenCallback = function() {
 	logger.info(`Application started on ${port}`);
 };
 
-const LISTEN_PORT = 3000;
+const certsDir = config.get('server.certs_dir');
+const LISTEN_PORT = config.get('server.port');
+const httpsEnabled = config.get('server.https');
 
-if (!module.parent && process.env.NODE_HTTPS) {
+if (!module.parent && httpsEnabled) {
 	const protocolSecrets = {
-		key: fs.readFileSync('fixtures/key.key'),
-		cert: fs.readFileSync('fixtures/cert.crt')
+		key: fs.readFileSync(`${certsDir}/key.key`),
+		cert: fs.readFileSync(`${certsDir}/cert.crt`)
 	};
 
 	https
@@ -136,7 +140,7 @@ if (!module.parent && process.env.NODE_HTTPS) {
 		.listen(LISTEN_PORT, listenCallback);
 }
 
-if (!module.parent && !process.env.NODE_HTTPS) {
+if (!module.parent && !httpsEnabled) {
 	http
 		.createServer(app.callback())
 		.listen(LISTEN_PORT, listenCallback);
