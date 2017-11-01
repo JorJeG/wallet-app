@@ -23,7 +23,7 @@ module.exports = {
 			script: './source/app.js',
 			exec_mode: 'cluster',
 			instance_var: '1',
-			instances: 4,
+			instances: 2,
 			env: {
 				COMMON_VARIABLE: 'true',
 				NODE_ENV: 'production',
