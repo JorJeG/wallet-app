@@ -115,35 +115,12 @@ app.use(async (ctx, next) => {
 
 app.use(bodyParser);
 app.use(router.routes());
-app.use(serve('./public'));
+// app.use(serve('./public'));
 
-const listenCallback = function () {
-	const {
-		port
-	} = this.address();
-
-	logger.info(`Application started on ${port}`);
-};
-
-const certsDir = config.get('server.certs_dir');
 const LISTEN_PORT = config.get('server.port');
-const httpsEnabled = config.get('server.https');
 
-if (!module.parent && httpsEnabled) {
-	const protocolSecrets = {
-		key: fs.readFileSync(`${certsDir}/key.key`),
-		cert: fs.readFileSync(`${certsDir}/cert.crt`)
-	};
-
-	https
-		.createServer(protocolSecrets, app.callback())
-		.listen(LISTEN_PORT, listenCallback);
-}
-
-if (!module.parent && !httpsEnabled) {
-	http
-		.createServer(app.callback())
-		.listen(LISTEN_PORT, listenCallback);
-}
+app.listen(LISTEN_PORT, () => {
+	logger.info(`Application started on ${LISTEN_PORT}`);
+});
 
 module.exports = app;
