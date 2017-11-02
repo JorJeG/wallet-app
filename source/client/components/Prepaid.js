@@ -53,6 +53,7 @@ class Prepaid extends Component {
 
 		return (
 			<PrepaidContract
+				user={this.props.user}
 				activeCard={activeCard}
 				inactiveCardsList={inactiveCardsList}
 				onPaymentSuccess={(transaction) => this.onPaymentSuccess(transaction)} />

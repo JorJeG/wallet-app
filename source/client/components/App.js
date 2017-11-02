@@ -101,7 +101,8 @@ class App extends Component {
 			activeCardIndex: 0,
 			removeCardId: 0,
 			isCardRemoving: false,
-			isCardsEditable: false
+			isCardsEditable: false,
+			isCardAdding: false
 		};
 	}
 
@@ -112,6 +113,16 @@ class App extends Component {
 	 */
 	onCardChange(activeCardIndex) {
 		this.setState({activeCardIndex});
+	}
+
+	/**
+	* Обработчик события добавления карты
+	* @param {Boolean} isEditable Признак редактируемости
+	*/
+	onAddChange() {
+		this.setState({
+			isCardAdding: true,
+		});
 	}
 
 	/**
@@ -142,6 +153,16 @@ class App extends Component {
 	}
 
 	/**
+	* Функция вызывает при успешном добавлении карты
+	*/
+	onAdd() {
+		axios.get('/cards').then(({data}) => {
+			const cardsList = App.prepareCardsData(data);
+			this.setState({cardsList, isCardAdding: false});
+		});
+	}
+
+	/**
 	 * Обработчик события переключения режима сайдбара
 	 * @param {String} mode Режим сайдбара
 	 * @param {String} index Индекс выбранной карты
@@ -151,6 +172,14 @@ class App extends Component {
 		this.setState({
 			isCardRemoving: true,
 			removeCardId
+		});
+	}
+	onCancelClick(isReturn) {
+		const isCardRemoving = isReturn;
+		this.setState({
+			isCardRemoving,
+			isCardsEditable: false,
+			isCardAdding: false
 		});
 	}
 
@@ -164,11 +193,13 @@ class App extends Component {
 			.then(() => {
 				axios.get('/cards').then(({data}) => {
 					const cardsList = App.prepareCardsData(data);
-					this.setState({cardsList});
+					this.setState({
+						cardsList,
+						isCardRemoving: false
+					});
 				});
 			});
 	}
-
 	/**
 	 * Рендер компонента
 	 *
@@ -176,7 +207,15 @@ class App extends Component {
 	 * @returns {JSX}
 	 */
 	render() {
-		const {cardsList, activeCardIndex, cardHistory, isCardsEditable, isCardRemoving, removeCardId} = this.state;
+		const {
+			cardsList,
+			activeCardIndex,
+			cardHistory,
+			isCardsEditable,
+			isCardRemoving,
+			isCardAdding,
+			removeCardId
+		} = this.state;
 		const activeCard = cardsList[activeCardIndex];
 
 		const inactiveCardsList = cardsList.filter((card, index) => (index === activeCardIndex ? false : card));
@@ -190,22 +229,29 @@ class App extends Component {
 					activeCardIndex={activeCardIndex}
 					removeCardId={removeCardId}
 					cardsList={cardsList}
+					onCancelClick={() => this.onCancelClick(false)}
 					onCardChange={(index) => this.onCardChange(index)}
+					onEditChange={() => this.onEditChange(isCardsEditable)}
+					onAddChange={() => this.onAddChange()}
+					onAdd={() => this.onAdd()}
 					isCardsEditable={isCardsEditable}
 					isCardRemoving={isCardRemoving}
+					isCardAdding={isCardAdding}
 					deleteCard={(index) => this.deleteCard(index)}
 					onChangeBarMode={(event, index) => this.onChangeBarMode(event, index)} />
 				<CardPane>
-					<Header activeCard={activeCard} />
+					<Header activeCard={activeCard} user={this.props.data.user} />
 					<Workspace>
 						<History cardHistory={filteredHistory} />
 						<Prepaid
+							user={this.props.data.user}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
 							onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
 							onTransaction={() => this.onTransaction()} />
-						<MobilePayment activeCard={activeCard} onTransaction={() => this.onTransaction()} />
+						<MobilePayment user={this.props.data.user} activeCard={activeCard} onTransaction={() => this.onTransaction()} />
 						<Withdraw
+							user={this.props.data.user}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
 							onTransaction={() => this.onTransaction()} />

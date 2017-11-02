@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
-import {Card, CardDelete} from './';
+import {Card, CardDelete, CardAdd} from './';
 
 const Layout = styled.div`
 	display: flex;
@@ -40,8 +40,19 @@ const Footer = styled.footer`
 `;
 
 const CardsBar = ({
-	activeCardIndex, cardsList, onCardChange, onEditChange, isCardsEditable, isCardRemoving, onChangeBarMode,
-	removeCardId, deleteCard
+	activeCardIndex,
+	cardsList,
+	onCardChange,
+	onEditChange,
+	onAddChange,
+	isCardsEditable,
+	isCardRemoving,
+	isCardAdding,
+	onChangeBarMode,
+	removeCardId,
+	deleteCard,
+	onCancelClick,
+	onAdd
 }) => {
 	const onCardClick = (index) => {
 		onCardChange && onCardChange(index);
@@ -53,15 +64,29 @@ const CardsBar = ({
 				<Logo />
 				<CardDelete
 					deleteCard={deleteCard}
+					onCancelClick={onCancelClick}
 					data={cardsList.filter((item) => item.id === removeCardId)[0]} />
 				<Footer>Yamoney Node School</Footer>
 			</Layout>
 		);
 	}
 
+	if (isCardAdding) {
+		return (
+			<Layout>
+				<Logo />
+				<CardAdd
+					onAdd={onAdd}
+					data={cardsList[0]}
+					onCancelClick={onCancelClick} />
+				<Footer>Yamoney Node School</Footer>
+			</Layout>
+		);
+	}
 	return (
 		<Layout>
 			<Logo />
+			<Edit onClick={onEditChange} />
 			<CardsList>
 				{cardsList
 					.filter((item) => !item.hidden)
@@ -75,7 +100,7 @@ const CardsBar = ({
 							onClick={() => onCardClick(index)} />
 					))
 				}
-				<Card type='new' />
+				<Card type='new' onAddChange={onAddChange} />
 			</CardsList>
 			<Footer>Yamoney Node School</Footer>
 		</Layout>
@@ -89,8 +114,13 @@ CardsBar.propTypes = {
 	onCardChange: PropTypes.func.isRequired,
 	isCardsEditable: PropTypes.bool.isRequired,
 	isCardRemoving: PropTypes.bool.isRequired,
+	isCardAdding: PropTypes.bool.isRequired,
 	deleteCard: PropTypes.func.isRequired,
-	onChangeBarMode: PropTypes.func.isRequired
+	onChangeBarMode: PropTypes.func.isRequired,
+	onCancelClick: PropTypes.func.isRequired,
+	onEditChange: PropTypes.func.isRequired,
+	onAddChange: PropTypes.func.isRequired,
+	onAdd: PropTypes.func.isRequired
 };
 
 export default CardsBar;

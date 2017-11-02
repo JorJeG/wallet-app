@@ -135,7 +135,10 @@ class PrepaidContract extends Component {
 			url: `/cards/${activeCard.id}/transfer`,
 			data: {
 				target: selectedCard.id,
-				sum
+				sum,
+				user: this.props.user.name,
+				mail: this.props.user.mail,
+				mailing: this.props.user.mailing
 			}
 		};
 

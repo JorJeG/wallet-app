@@ -71,6 +71,22 @@ class Card extends Component {
 	}
 
 	/**
+	 * Обработка изменения значения в input
+	 * @param {Event} event событие изменения значения input
+	 */
+	onChangeInputValue(event) {
+		if (!event) {
+			return;
+		}
+
+		const {name, value} = event.target;
+
+		this.setState({
+			[name]: value
+		});
+	}
+
+	/**
 	 * Обработчик переключения карты
 	 *
 	 * @param {Number} activeCardIndex индекс выбранной карты
@@ -86,10 +102,20 @@ class Card extends Component {
 	 * @returns {JSX}
 	 */
 	render() {
-		const {data, type, active, isSingle, onClick, isCardsEditable, onChangeBarMode} = this.props;
+		const {
+			data,
+			type,
+			active,
+			isSingle,
+			onClick,
+			isCardsEditable,
+			onChangeBarMode,
+			onAddChange
+		} = this.props;
 		if (type === 'new') {
 			return (
-				<NewCardLayout />
+				<NewCardLayout
+					onClick={() => onAddChange()} />
 			);
 		}
 
@@ -114,7 +140,12 @@ class Card extends Component {
 		}
 
 		const {number, theme, id} = data;
-		const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
+		const {
+			bgColor,
+			textColor,
+			bankLogoUrl,
+			brandLogoUrl
+		} = theme;
 		const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
 
 		return (
@@ -143,7 +174,8 @@ Card.propTypes = {
 	isSingle: PropTypes.bool,
 	isCardsEditable: PropTypes.bool,
 	onClick: PropTypes.func,
-	onChangeBarMode: PropTypes.func
+	onChangeBarMode: PropTypes.func,
+	onAddChange: PropTypes.func
 };
 
 export default Card;

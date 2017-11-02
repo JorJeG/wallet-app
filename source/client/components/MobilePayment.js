@@ -57,6 +57,7 @@ class MobilePayment extends Component {
 
 		return (
 			<MobilePaymentContract
+				user={this.props.user}
 				activeCard={activeCard}
 				onPaymentSuccess={(transaction) => this.onPaymentSuccess(transaction)} />
 		);

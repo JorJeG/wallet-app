@@ -47,7 +47,9 @@ function getView(viewId) {
 async function getData(ctx) {
 	const user = {
 		login: 'samuel_johnson',
-		name: 'Samuel Johnson'
+		name: 'Samuel Johnson',
+		mail: 'georg_starkov@mail.ru',
+		mailing: true
 	};
 	const cards = await ctx.cardsModel.getAll();
 	const transactions = await ctx.transactionsModel.getAll();
@@ -115,7 +117,7 @@ app.use(async (ctx, next) => {
 
 app.use(bodyParser);
 app.use(router.routes());
-// app.use(serve('./public'));
+app.use(serve('./public'));
 
 const LISTEN_PORT = config.get('server.port');
 

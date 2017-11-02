@@ -117,9 +117,10 @@ class MobilePaymentContract extends Component {
 		}
 
 		const {activeCard} = this.props;
+		const {mail, mailing} = this.props.user;
 
 		axios
-			.post(`/cards/${activeCard.id}/pay`, {phoneNumber, sum})
+			.post(`/cards/${activeCard.id}/pay`, {phoneNumber, sum, mail, mailing})
 			.then(() => this.props.onPaymentSuccess({sum, phoneNumber, commission}));
 	}
 
