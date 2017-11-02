@@ -5,19 +5,16 @@ module.exports = {
    */
 	apps: [
 
-		// First application
 		{
 			name: 'DEVELOPMENT',
 			script: './source/app.js',
 			watch: true,
 			instance_var: '0',
 			env: {
-				COMMON_VARIABLE: 'true',
 				NODE_PATH: '.'
 			},
 		},
 
-		// First application
 		{
 			name: 'PRODUCTION',
 			script: './source/app.js',
@@ -25,7 +22,6 @@ module.exports = {
 			instance_var: '1',
 			instances: 2,
 			env: {
-				COMMON_VARIABLE: 'true',
 				NODE_ENV: 'production',
 				NODE_PATH: '.',
 			},

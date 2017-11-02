@@ -1,10 +1,7 @@
 'use strict';
 
-const fs = require('fs');
 const Koa = require('koa');
 const path = require('path');
-const http = require('http');
-const https = require('https');
 const config = require('config');
 const serve = require('koa-static');
 const router = require('koa-router')();
@@ -117,7 +114,10 @@ app.use(async (ctx, next) => {
 
 app.use(bodyParser);
 app.use(router.routes());
-app.use(serve('./public'));
+
+if (config.get('server.serve_static_files')) {
+	app.use(serve('./public'));
+}
 
 const LISTEN_PORT = config.get('server.port');
 

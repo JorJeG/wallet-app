@@ -1,8 +1,7 @@
 {
   "server": {
     "port": 3001,
-    "certs_dir": "fixtures",
-    "https": false
+    "serve_static_files": true
   },
   "db": {
     "url": "mongodb://localhost/school-wallet"
