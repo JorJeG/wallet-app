@@ -15,20 +15,21 @@ mongorestore --db=school-wallet school-wallet-dump
 ```
 
 ## Добавить конфиг config/default.json
-```sh
+домены для почты mail.ru, bk.ru, list.ru, inbox.ru в моей реализации
+```js
 {
-  "server": {
-    "port": 3001,
-    "certs_dir": "fixtures",
-    "https": false
-  },
+	"server": {
+		"port": 3001,
+		"certs_dir": "fixtures",
+		"https": false
+	},
 	"mailing": {
 		// Ваша почта
 		"mail": "_____",
 		// Пароль
 		"pass": "_____",
 		// Ваша почта
-		"from": "Яндекс.Деньги ______"
+		"from": "Wallet-App ______"
 	}
 }
 ```

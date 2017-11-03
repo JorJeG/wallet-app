@@ -52,6 +52,12 @@ class Withdraw extends Component {
 		};
 	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			selectedCard: nextProps.inactiveCardsList[0]
+		});
+	}
+
 	/**
 	 * Обработка изменения значения в input
 	 * @param {Event} event событие изменения значения input
@@ -65,6 +71,12 @@ class Withdraw extends Component {
 
 		this.setState({
 			[name]: value
+		});
+	}
+
+	onCardSelected(index) {
+		this.setState({
+			selectedCard: this.props.inactiveCardsList[index]
 		});
 	}
 
@@ -114,7 +126,10 @@ class Withdraw extends Component {
 			<form onSubmit={(event) => this.onSubmitForm(event)}>
 				<WithdrawLayout>
 					<WithdrawTitle>Вывести деньги на карту</WithdrawTitle>
-					<Card type='select' data={inactiveCardsList} />
+					<Card
+						type='select'
+						data={inactiveCardsList}
+						onCardSelected={(index) => this.onCardSelected(index)} />
 					<InputField>
 						<SumInput
 							name='sum'
