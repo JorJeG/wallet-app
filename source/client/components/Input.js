@@ -8,6 +8,7 @@ const StyledInput = styled.input`
 	height: 36px;
 	padding: 4px 7px;
 	border: 1px solid rgba(0, 0, 0, 0.04);
+	border: ${({invalid}) => (invalid ? '1px solid rgba(0, 0, 0, 0.04)' : '1px solid #d3292a')};
 	border-radius: 3px;
 	background-color: rgba(0, 0, 0, 0.2);
 	font-size: 15px;
