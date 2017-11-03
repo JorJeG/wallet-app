@@ -204,7 +204,7 @@ class CardAdd extends Component {
 							name='cardNumber'
 							placeholder='0000 0000 0000 000'
 							value={this.state.cardNumber}
-							invalid={!invalid}
+							invalid={invalid}
 							onChange={(event) => this.onChangeInputValue(event)} />
 					</CardNumber>
 					<CardType url={brandLogoUrl} active={!invalid} />
