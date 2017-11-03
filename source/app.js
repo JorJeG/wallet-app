@@ -46,7 +46,7 @@ async function getData(ctx) {
 		login: 'samuel_johnson',
 		name: 'Samuel Johnson',
 		mail: 'georg_starkov@mail.ru',
-		mailing: true
+		mailing: false
 	};
 	const cards = await ctx.cardsModel.getAll();
 	const transactions = await ctx.transactionsModel.getAll();

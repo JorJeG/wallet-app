@@ -79,7 +79,7 @@ class MobilePaymentContract extends Component {
 		super(props);
 
 		this.state = {
-			phoneNumber: '+79218908064',
+			phoneNumber: '',
 			sum: 0,
 			commission: 3
 		};
@@ -134,6 +134,15 @@ class MobilePaymentContract extends Component {
 		}
 
 		const {name, value} = event.target;
+		if (name === 'phoneNumber') {
+			if (
+				!value.match(/^\+/) ||
+				value.match(/\+/g)[1] ||
+				value.replace(/[+]/g, '').length > 11 ||
+				value.match(/[^0-9+]/g)) {
+				return;
+			}
+		}
 
 		this.setState({
 			[name]: value
@@ -157,14 +166,17 @@ class MobilePaymentContract extends Component {
 						<Label>Телефон</Label>
 						<InputPhoneNumber
 							name='phoneNumber'
+							placeholder='+79218908064'
+							invalid={false}
 							value={this.state.phoneNumber}
-							readOnly='true' />
+							onChange={(event) => this.onChangeInputValue(event)} />
 					</InputField>
 					<InputField>
 						<Label>Сумма</Label>
 						<InputSum
 							name='sum'
 							value={this.state.sum}
+							invalid={false}
 							onChange={(event) => this.onChangeInputValue(event)} />
 						<Currency>₽</Currency>
 					</InputField>
