@@ -40,7 +40,6 @@ module.exports = [
 		plugins: [
 			new ExtractTextPlugin('[name].css')
 		],
-		watch: true
 	},
 	{
 		entry: {
@@ -66,6 +65,5 @@ module.exports = [
 			path: path.resolve(__dirname, 'source/views'),
 			libraryTarget: 'umd'
 		},
-		watch: true
 	}
 ];
