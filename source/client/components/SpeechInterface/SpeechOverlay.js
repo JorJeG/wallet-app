@@ -27,7 +27,18 @@ export default class SpeechOverlay extends React.Component {
 		this.state = {hidden: true};
 	}
 
+	/**
+	 * Закрытие оверлея по клику, по нажатию ESC,
+	 * обработка правильного конца анимации
+	 */
 	componentDidMount() {
+		this.overlay.addEventListener('click', this.props.onPress);
+
+		window.addEventListener('keyup', (e) => {
+			if (e.keyCode !== 27) return;
+			this.props.onPress();
+		});
+
 		this.overlay.addEventListener('webkitTransitionEnd', () => {
 			if (!this.props.visible) {
 				this.setState({hidden: true});
@@ -35,6 +46,7 @@ export default class SpeechOverlay extends React.Component {
 		});
 	}
 
+	// Обработка правильности анимации
 	componentWillReceiveProps(newProps) {
 		if (newProps.visible) {
 			this.setState({hidden: false});
@@ -53,8 +65,10 @@ export default class SpeechOverlay extends React.Component {
 
 SpeechOverlay.defaultProps = {
 	visible: false,
+	onPress: () => {},
 };
 
 SpeechOverlay.propTypes = {
 	visible: propTypes.bool,
+	onPress: propTypes.func,
 };

@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 
 import {recognizeSpeech} from '../../utils';
 
-const Image = styled.img`
+const Microphone = styled.img`
 	position: fixed;
 	right: calc(50vw - 35px);
 	bottom: 30;
@@ -29,7 +29,7 @@ export default function SpeechButton(props) {
 	};
 
 	return (
-		<Image
+		<Microphone
 			{...props}
 			alt='mic'
 			width='70'

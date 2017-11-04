@@ -268,7 +268,10 @@ class App extends Component {
 				<SpeechButton
 					isSpeaking={this.state.isSpeaking}
 					onClick={() => this.setState({isSpeaking: !this.state.isSpeaking})} />
-				<SpeechOverlay visible={this.state.isSpeaking} />
+
+				<SpeechOverlay
+					onPress={() => this.setState({isSpeaking: !this.state.isSpeaking})}
+					visible={this.state.isSpeaking} />
 
 			</Wallet>
 		);
