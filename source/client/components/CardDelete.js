@@ -5,7 +5,7 @@ import {Card, Button} from './';
 
 const CardDeleteLayout = styled.div`
 	flex: 1;
-	width: 260px;
+	width: 275px;
 `;
 
 const Title = styled.div`

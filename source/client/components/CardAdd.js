@@ -7,7 +7,7 @@ import {Button, Input} from './';
 
 const CardLayout = styled.div`
 	position: relative;
-	width: 260px;
+	width: 275px;
 	height: 164px;
 	box-sizing: border-box;
 	margin-bottom: ${({isSingle}) => (isSingle ? 0 : '15px')};
@@ -47,7 +47,7 @@ const InputCardNumber = styled(Input)`
 
 const CardAddLayout = styled.div`
 	flex: 1;
-	width: 260px;
+	width: 275px;
 `;
 
 const Title = styled.div`
