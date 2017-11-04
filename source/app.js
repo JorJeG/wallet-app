@@ -49,7 +49,7 @@ async function getData(ctx) {
 		mailing: false
 	};
 	const cards = await ctx.cardsModel.getAll();
-	const transactions = await ctx.transactionsModel.getAll();
+	const transactions = await ctx.transactionsModel.getAll({time: -1});
 
 	return {
 		user,
