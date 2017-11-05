@@ -20,6 +20,8 @@ const cardToCard = require('./controllers/cards/card-to-card');
 const cardToMobile = require('./controllers/cards/card-to-mobile');
 const mobileToCard = require('./controllers/cards/mobile-to-card');
 
+const Bot = require('bot/Bot');
+
 const errorController = require('./controllers/error');
 
 const ApplicationError = require('libs/application-error');
@@ -107,6 +109,12 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
 	ctx.cardsModel = new CardsModel();
 	ctx.transactionsModel = new TransactionsModel();
+
+	await next();
+});
+
+app.use(async (ctx, next) => {
+	ctx.Bot = Bot;
 
 	await next();
 });

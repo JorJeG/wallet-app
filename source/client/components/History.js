@@ -101,7 +101,7 @@ const History = ({cardHistory}) => {
 			}
 		}
 
-		return `${typeTitle}: ${item.data.cardNumber || item.data.phoneNumber}`;
+		return `${typeTitle}`//: ${item.data.cardNumber || item.data.phoneNumber}`;
 	};
 	const getContent = (list) => {
 		const content = list.reduce((result, item, index) => {
