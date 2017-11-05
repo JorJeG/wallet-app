@@ -136,11 +136,13 @@ class CardAdd extends Component {
 		}
 
 		const {name, value} = event.target;
-		if (value.replace(/\s/g, '').length > 15 || value.match(/[^0-9|\s]/g)) {
+		const formattedValue = value.replace(/\s/g, '');
+
+		if (formattedValue.length > 16 || value.match(/[^0-9|\s]/g)) {
 			return;
 		}
 		// disabled/enabled button
-		if (value.replace(/\s/g, '').length === 15 && !this.state.invalid) {
+		if (formattedValue.length === 16 && !this.state.invalid) {
 			this.setState({
 				isCompleted: true
 			});
@@ -150,12 +152,12 @@ class CardAdd extends Component {
 			});
 		}
 		// Карточка получает тему только если валидна
-		if (value.replace(/\s/g, '').length <= 5) {
+		if (formattedValue.length <= 5) {
 			this.setState({
 				invalid: true
 			});
 		}
-		if (value.replace(/\s/g, '').length > 5) {
+		if (formattedValue.length > 5) {
 			if (CardAdd.prepareCardsData(value).bankName === null) {
 				this.setState({
 					invalid: true
@@ -187,7 +189,10 @@ class CardAdd extends Component {
 		const {theme} = this.state.newCard;
 		const {invalid, isCompleted} = this.state;
 		const {onCancelClick} = this.props;
-		const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
+		const {
+			bgColor, textColor, bankLogoUrl, brandLogoUrl
+		} = theme;
+
 		return (
 			<CardAddLayout>
 				<Title>Добавление карты</Title>
@@ -202,25 +207,31 @@ class CardAdd extends Component {
 					<CardNumber textColor={textColor} >
 						<InputCardNumber
 							name='cardNumber'
-							placeholder='0000 0000 0000 000'
+							placeholder='0000 0000 0000 0000'
 							value={this.state.cardNumber}
 							invalid={invalid}
 							onChange={(event) => this.onChangeInputValue(event)} />
 					</CardNumber>
 					<CardType url={brandLogoUrl} active={!invalid} />
 				</CardLayout>
-				{invalid ? (
-					<LinkCardText>Карта не валидна</LinkCardText>
-				) : (
-					<LinkCardText></LinkCardText>
-				)}
+
+				{invalid && <LinkCardText>Карта не валидна</LinkCardText>}
+
 				<Footer>
-					<div onClick={() => this.createCard()}>
-						<Button bgColor='#d3292a' textColor='#fff' disabled={!isCompleted}>Добавить</Button>
-					</div>
-					<div onClick={() => onCancelClick(true)}>
-						<Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>
-					</div>
+					<Button
+						bgColor='#d3292a'
+						textColor='#fff'
+						disabled={!isCompleted}
+						onClick={() => this.createCard()}>
+						Добавить
+					</Button>
+
+					<Button
+						bgColor='#1F1F1F'
+						textColor='#fff'
+						onClick={() => onCancelClick(true)}>
+						Вернуться
+					</Button>
 				</Footer>
 			</CardAddLayout>
 		);
