@@ -11,9 +11,10 @@ class DbModel extends Model {
 		this._MongooseModel = MongooseModel;
 	}
 
-	async getAll() {
+	async getAll(sort = {}) {
 		const data = await this._MongooseModel
 			.find({})
+			.sort(sort)
 			.lean()
 			.exec();
 		return data;

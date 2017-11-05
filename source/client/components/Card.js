@@ -5,7 +5,7 @@ import {Select, CardEdit} from './';
 
 const CardLayout = styled.div`
 	position: relative;
-	width: 260px;
+	width: 275px;
 	height: 164px;
 	box-sizing: border-box;
 	margin-bottom: ${({isSingle}) => (isSingle ? 0 : '15px')};
@@ -93,6 +93,7 @@ class Card extends Component {
 	 */
 	onCardChange(activeCardIndex) {
 		this.setState({activeCardIndex});
+		this.props.onCardSelected(activeCardIndex);
 	}
 
 	/**
@@ -175,7 +176,8 @@ Card.propTypes = {
 	isCardsEditable: PropTypes.bool,
 	onClick: PropTypes.func,
 	onChangeBarMode: PropTypes.func,
-	onAddChange: PropTypes.func
+	onAddChange: PropTypes.func,
+	onCardSelected: PropTypes.func
 };
 
 export default Card;

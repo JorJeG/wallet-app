@@ -170,6 +170,21 @@ class App extends Component {
 	}
 
 	/**
+	* Функция вызывает при успешном удалении карты
+	*/
+	onDelete() {
+		axios.get('/cards').then(({data}) => {
+			const cardsList = App.prepareCardsData(data);
+			this.setState({
+				cardsList,
+				activeCardIndex: 0,
+				isCardRemoving: false,
+				isCardsEditable: false
+			});
+		});
+	}
+
+	/**
 	 * Обработчик события переключения режима сайдбара
 	 * @param {String} mode Режим сайдбара
 	 * @param {String} index Индекс выбранной карты
@@ -197,15 +212,7 @@ class App extends Component {
 	deleteCard(id) {
 		axios
 			.delete(`/cards/${id}`)
-			.then(() => {
-				axios.get('/cards').then(({data}) => {
-					const cardsList = App.prepareCardsData(data);
-					this.setState({
-						cardsList,
-						isCardRemoving: false
-					});
-				});
-			});
+			.then(() => this.onDelete());
 	}
 	/**
 	 * Рендер компонента

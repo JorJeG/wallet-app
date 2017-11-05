@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import axios from 'axios';
+import CardInfo from 'card-info';
 import {Button, Input} from './';
 
 const CardLayout = styled.div`
 	position: relative;
-	width: 260px;
+	width: 275px;
 	height: 164px;
 	box-sizing: border-box;
 	margin-bottom: ${({isSingle}) => (isSingle ? 0 : '15px')};
@@ -46,7 +47,7 @@ const InputCardNumber = styled(Input)`
 
 const CardAddLayout = styled.div`
 	flex: 1;
-	width: 260px;
+	width: 275px;
 `;
 
 const Title = styled.div`
@@ -69,6 +70,7 @@ const Description = styled.div`
 const LinkCardText = styled.div`
 	opacity: 0.4;
 	font-size: 11px;
+	font-weight: 600;
 	line-height: 2.18;
 	letter-spacing: 0.5px;
 	color: #ffffff;
@@ -83,6 +85,30 @@ const Footer = styled.div`
 
 class CardAdd extends Component {
 	/**
+	 * Подготавливает данные карт
+	 *
+	 * @param {Object} cards данные карт
+	 * @returns {Object[]}
+	 */
+	static prepareCardsData(cardNumber) {
+		const cardInfo = new CardInfo(cardNumber, {
+			banksLogosPath: '/assets/',
+			brandsLogosPath: '/assets/'
+		});
+
+		return {
+			number: cardInfo.numberNice,
+			bankName: cardInfo.bankName,
+			theme: {
+				bgColor: cardInfo.backgroundColor,
+				textColor: cardInfo.textColor,
+				bankLogoUrl: cardInfo.bankLogoSvg,
+				brandLogoUrl: cardInfo.brandLogoSvg,
+				bankSmLogoUrl: `/assets/${cardInfo.bankAlias}-history.svg`
+			}
+		};
+	}
+	/**
 	 * Конструктор
 	 *
 	 * @param {Object} props свойства компонента
@@ -91,8 +117,11 @@ class CardAdd extends Component {
 		super(props);
 
 		this.state = {
+			newCard: CardAdd.prepareCardsData('6768 0300'),
 			cardNumber: '',
-			balance: 1000
+			balance: 1000,
+			invalid: true,
+			isCompleted: false
 		};
 	}
 
@@ -101,17 +130,47 @@ class CardAdd extends Component {
 	 * @param {Event} event событие изменения значения input
 	 */
 	onChangeInputValue(event) {
+		event.stopPropagation();
 		if (!event) {
 			return;
 		}
 
 		const {name, value} = event.target;
-		if (value.replace(/\s/g, '').length === 16 || value.match(/[^0-9|\s]/g)) {
+		const formattedValue = value.replace(/\s/g, '');
+
+		if (formattedValue.length > 16 || value.match(/[^0-9|\s]/g)) {
 			return;
 		}
-
+		// disabled/enabled button
+		if (formattedValue.length === 16 && !this.state.invalid) {
+			this.setState({
+				isCompleted: true
+			});
+		} else {
+			this.setState({
+				isCompleted: false
+			});
+		}
+		// Карточка получает тему только если валидна
+		if (formattedValue.length <= 5) {
+			this.setState({
+				invalid: true
+			});
+		}
+		if (formattedValue.length > 5) {
+			if (CardAdd.prepareCardsData(value).bankName === null) {
+				this.setState({
+					invalid: true
+				});
+			} else {
+				this.setState({
+					newCard: CardAdd.prepareCardsData(value),
+					invalid: false
+				});
+			}
+		}
 		this.setState({
-			[name]: value.replace(/\s/g, '').length % 4 === 0 ? `${value} ` : value
+			[name]: value
 		});
 	}
 
@@ -127,9 +186,13 @@ class CardAdd extends Component {
 			.then(() => this.props.onAdd());
 	}
 	render() {
-		const {theme} = this.props.data;
+		const {theme} = this.state.newCard;
+		const {invalid, isCompleted} = this.state;
 		const {onCancelClick} = this.props;
-		const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
+		const {
+			bgColor, textColor, bankLogoUrl, brandLogoUrl
+		} = theme;
+
 		return (
 			<CardAddLayout>
 				<Title>Добавление карты</Title>
@@ -138,25 +201,37 @@ class CardAdd extends Component {
 				</Description>
 				<CardLayout
 					bgColor={bgColor}
-					isSingle>
-					<CardLogo url={bankLogoUrl} />
+					isSingle
+					active={!invalid}>
+					<CardLogo url={bankLogoUrl} active={!invalid} />
 					<CardNumber textColor={textColor} >
 						<InputCardNumber
 							name='cardNumber'
-							placeholder='0000 0000 0000 000'
+							placeholder='0000 0000 0000 0000'
 							value={this.state.cardNumber}
+							invalid={invalid}
 							onChange={(event) => this.onChangeInputValue(event)} />
 					</CardNumber>
-					<CardType url={brandLogoUrl} />
+					<CardType url={brandLogoUrl} active={!invalid} />
 				</CardLayout>
-				<LinkCardText>Привязать карту можно в любой момент</LinkCardText>
+
+				{invalid && <LinkCardText>Карта не валидна</LinkCardText>}
+
 				<Footer>
-					<div onClick={() => this.createCard()}>
-						<Button bgColor='#d3292a' textColor='#fff'>Добавить</Button>
-					</div>
-					<div onClick={() => onCancelClick(true)}>
-						<Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>
-					</div>
+					<Button
+						bgColor='#d3292a'
+						textColor='#fff'
+						disabled={!isCompleted}
+						onClick={() => this.createCard()}>
+						Добавить
+					</Button>
+
+					<Button
+						bgColor='#1F1F1F'
+						textColor='#fff'
+						onClick={() => onCancelClick(true)}>
+						Вернуться
+					</Button>
 				</Footer>
 			</CardAddLayout>
 		);

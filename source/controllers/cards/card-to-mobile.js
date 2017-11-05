@@ -12,7 +12,7 @@ module.exports = async (ctx) => {
 
 	const transaction = await ctx.transactionsModel.create({
 		cardId,
-		type: 'withdrawCard',
+		type: 'paymentMobile',
 		data: {phoneNumber},
 		time: new Date().toISOString(),
 		sum
