@@ -7,7 +7,8 @@ module.exports = {
 	],
 
 	"globals": {
-		"document": true
+		"document": true,
+		"window": true,
 	},
 
 	"plugins": [
