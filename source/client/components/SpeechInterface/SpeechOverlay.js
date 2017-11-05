@@ -8,7 +8,7 @@ const Overlay = (props) => css`
 	height: 100%;
 	cursor: pointer;
 	z-index: 5;
-	background: rgba(0, 0, 0, 0.8);
+	background: rgba(0, 0, 0, 0.85);
 	transition: opacity 1s ease;
 	left: ${props.hidden ? '-99999px' : '0'};
 	opacity: ${props.visible ? 1 : 0};
@@ -56,7 +56,6 @@ export default class SpeechOverlay extends React.Component {
 	render() {
 		return (
 			<div
-				{...this.props}
 				ref={(overlay) => (this.overlay = overlay)} // eslint-disable-line
 				className={Overlay({visible: this.props.visible, hidden: this.state.hidden})} />
 		);
