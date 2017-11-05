@@ -27,6 +27,7 @@ const errorController = require('./controllers/error');
 const ApplicationError = require('libs/application-error');
 const CardsModel = require('source/models/cards');
 const TransactionsModel = require('source/models/transactions');
+const UsersModel = require('source/models/users');
 
 const getTransactionsController = require('./controllers/transactions/get-transactions');
 
@@ -34,6 +35,16 @@ const mongoose = require('mongoose');
 
 mongoose.connect(config.get('db.url'), {useMongoClient: true});
 mongoose.Promise = global.Promise;
+
+UsersModel.create({
+	username: 'Sasha123',
+	yandex_id: 12345,
+	realName: 'Sasha Sashin',
+	email: 'miss@ya.ru',
+	token: '123qwe',
+	phoneNumber: '+79811111111',
+	card_id: 1234512345,
+});
 
 const app = new Koa();
 

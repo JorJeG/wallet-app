@@ -25,7 +25,7 @@ const User = mongoose.model('User', {
 		type: String,
 		required: true
 	},
-	card: {
+	card_id: {
 		type: Number,
 		required: true
 	},
