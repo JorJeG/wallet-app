@@ -10,8 +10,13 @@ import {
 	History,
 	Prepaid,
 	MobilePayment,
-	Withdraw
+	Withdraw,
 } from './';
+
+import {
+	SpeechButton,
+	SpeechOverlay,
+} from './SpeechInterface';
 
 import './fonts.css';
 
@@ -32,6 +37,7 @@ const Wallet = styled.div`
 	display: flex;
 	min-height: 100%;
 	background-color: #fcfcfc;
+	position: relative;
 `;
 
 const CardPane = styled.div`
@@ -102,7 +108,8 @@ class App extends Component {
 			removeCardId: 0,
 			isCardRemoving: false,
 			isCardsEditable: false,
-			isCardAdding: false
+			isCardAdding: false,
+			isSpeaking: false,
 		};
 	}
 
@@ -257,6 +264,15 @@ class App extends Component {
 							onTransaction={() => this.onTransaction()} />
 					</Workspace>
 				</CardPane>
+
+				<SpeechButton
+					isSpeaking={this.state.isSpeaking}
+					onClick={() => this.setState({isSpeaking: !this.state.isSpeaking})} />
+
+				<SpeechOverlay
+					onPress={() => this.setState({isSpeaking: !this.state.isSpeaking})}
+					visible={this.state.isSpeaking} />
+
 			</Wallet>
 		);
 	}
