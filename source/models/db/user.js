@@ -26,7 +26,7 @@ const User = mongoose.model('User', {
 		required: true
 	},
 	card_id: {
-		type: Number,
+		type: [Number],
 		required: true
 	},
 	telegram_id: Number
