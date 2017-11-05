@@ -23,7 +23,6 @@ const Text = styled.div`
 	transition: all 1s ease;
 	width: 300px;
 	margin-top: .5em;
-	min-height: 57px;
 `;
 
 /**
