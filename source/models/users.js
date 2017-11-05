@@ -1,4 +1,4 @@
-const DbModel = require('common/dbModel');
+const DbModel = require('./common/dbModel');
 
 
 class Users extends DbModel {

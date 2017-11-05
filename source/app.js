@@ -36,15 +36,6 @@ const mongoose = require('mongoose');
 mongoose.connect(config.get('db.url'), {useMongoClient: true});
 mongoose.Promise = global.Promise;
 
-UsersModel.create({
-	username: 'Sasha123',
-	yandex_id: 12345,
-	realName: 'Sasha Sashin',
-	email: 'miss@ya.ru',
-	token: '123qwe',
-	phoneNumber: '+79811111111',
-	card_id: 1234512345,
-});
 
 const app = new Koa();
 
