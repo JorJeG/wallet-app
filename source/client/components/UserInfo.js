@@ -15,9 +15,21 @@ const Avatar = styled.img`
 	margin-right: 10px;
 `;
 
+const LogoutLink = styled.a`
+	color: grey;
+	font-size: .8em;
+`;
+
 export default ({user}) => (
 	<User>
 		<Avatar src='/assets/avatar.png' />
-		{user.name}
+
+		<div>
+			<div>{user.name}</div>
+			<LogoutLink>
+				Выйти
+			</LogoutLink>
+		</div>
+
 	</User>
 );

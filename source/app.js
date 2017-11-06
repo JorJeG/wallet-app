@@ -42,12 +42,15 @@ function getView(viewId) {
 }
 
 async function getData(ctx) {
-	const user = {
-		login: 'samuel_johnson',
-		name: 'Samuel Johnson',
-		mail: 'georg_starkov@mail.ru',
-		mailing: false
-	};
+	// const user = {
+	// 	login: 'samuel_johnson',
+	// 	name: 'Samuel Johnson',
+	// 	mail: 'georg_starkov@mail.ru',
+	// 	mailing: false
+	// };
+
+	const user = null;
+
 	const cards = await ctx.cardsModel.getAll();
 	const transactions = await ctx.transactionsModel.getAll({time: -1});
 

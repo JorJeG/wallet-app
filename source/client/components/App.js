@@ -11,6 +11,7 @@ import {
 	Prepaid,
 	MobilePayment,
 	Withdraw,
+	Authorize,
 } from './';
 
 import {
@@ -236,6 +237,14 @@ class App extends Component {
 		const filteredHistory = cardHistory.filter((data) => {
 			return Number(data.cardId) == activeCard.id;
 		});
+
+		if (!this.props.data.user) {
+			return (
+				<Wallet>
+					<Authorize />
+				</Wallet>
+			);
+		}
 
 		return (
 			<Wallet>
