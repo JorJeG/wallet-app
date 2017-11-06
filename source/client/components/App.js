@@ -12,6 +12,7 @@ import {
 	MobilePayment,
 	Withdraw,
 	Authorize,
+	UserInfo,
 } from './';
 
 import {
@@ -111,6 +112,7 @@ class App extends Component {
 			isCardsEditable: false,
 			isCardAdding: false,
 			isSpeaking: false,
+			user: props.data.user,
 		};
 	}
 
@@ -142,6 +144,12 @@ class App extends Component {
 		this.setState({
 			isCardsEditable,
 			isCardRemoving: false
+		});
+	}
+
+	onLogout() {
+		axios.get('/logout').then(() => {
+			this.setState(() => ({user: null}));
 		});
 	}
 
@@ -229,16 +237,17 @@ class App extends Component {
 			isCardsEditable,
 			isCardRemoving,
 			isCardAdding,
-			removeCardId
+			removeCardId,
+			user
 		} = this.state;
 		const activeCard = cardsList[activeCardIndex];
 
 		const inactiveCardsList = cardsList.filter((card, index) => (index === activeCardIndex ? false : card));
 		const filteredHistory = cardHistory.filter((data) => {
-			return Number(data.cardId) == activeCard.id;
+			return Number(data.cardId) === activeCard.id;
 		});
 
-		if (!this.props.data.user) {
+		if (!user) {
 			return (
 				<Wallet>
 					<Authorize />
@@ -263,18 +272,20 @@ class App extends Component {
 					deleteCard={(index) => this.deleteCard(index)}
 					onChangeBarMode={(event, index) => this.onChangeBarMode(event, index)} />
 				<CardPane>
-					<Header activeCard={activeCard} user={this.props.data.user} />
+					<Header activeCard={activeCard}>
+						<UserInfo user={user} onLogout={() => this.onLogout()} />
+					</Header>
 					<Workspace>
 						<History cardHistory={filteredHistory} />
 						<Prepaid
-							user={this.props.data.user}
+							user={user}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
 							onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
 							onTransaction={() => this.onTransaction()} />
-						<MobilePayment user={this.props.data.user} activeCard={activeCard} onTransaction={() => this.onTransaction()} />
+						<MobilePayment user={user} activeCard={activeCard} onTransaction={() => this.onTransaction()} />
 						<Withdraw
-							user={this.props.data.user}
+							user={user}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
 							onTransaction={() => this.onTransaction()} />

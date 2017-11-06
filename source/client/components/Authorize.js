@@ -29,7 +29,7 @@ const YandexButton = styled(Button)`
 export default function Authrorize() {
 	return (
 		<Container>
-			<YandexButton bgColor='#e61400'>
+			<YandexButton bgColor='#e61400' onClick={() => { window.location.href = '/auth/yandex' ;}}>
 				<div style={{marginBottom: '3px'}}>войти через</div>
 				<img src={imageSource} alt='Яндекс' />
 			</YandexButton>

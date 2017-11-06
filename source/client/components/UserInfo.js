@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'emotion/react';
+import propTypes from 'prop-types';
 
 const User = styled.div`
 	display: flex;
@@ -20,16 +21,26 @@ const LogoutLink = styled.a`
 	font-size: .8em;
 `;
 
-export default ({user}) => (
-	<User>
-		<Avatar src='/assets/avatar.png' />
+export default function UserInfo(props) {
+	return (
+		<User>
+			<Avatar src={props.user.avatar_url} />
 
-		<div>
-			<div>{user.name}</div>
-			<LogoutLink>
-				Выйти
-			</LogoutLink>
-		</div>
+			<div>
+				<div>{props.user.name}</div>
+				<LogoutLink onClick={() => props.onLogout()}>
+					Выйти
+				</LogoutLink>
+			</div>
 
-	</User>
-);
+		</User>
+	);
+}
+
+UserInfo.propTypes = {
+	user: propTypes.shape({
+		name: propTypes.string,
+		avatar_url: propTypes.string,
+	}),
+	onLogout: propTypes.func.isRequired,
+};
