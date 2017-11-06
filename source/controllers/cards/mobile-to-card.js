@@ -4,8 +4,7 @@ module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
 	const operation = ctx.request.body;
-	const {phoneNumber, sum, mail, mailing} = operation;
-
+	const {sum, phoneNumber, mail, mailing} = operation;
 	ctx.cardsModel.refill(cardId, sum);
 
 	const transaction = await ctx.transactionsModel.create({
@@ -17,7 +16,7 @@ module.exports = async (ctx) => {
 	}, {mail, mailing});
 
 	const activeCard = await ctx.cardsModel.get(cardId);
-	ctx.Bot.sendMessage(229713286, `[New transaction]: ${transaction.sum} руб INCOME
+	ctx.Bot.sendMessage(229713286, `[New transaction]: ${sum} руб INCOME
 		to card: ${activeCard.cardNumber}\n
 		type: ${transaction.type}
 		from mobile: ${phoneNumber}
