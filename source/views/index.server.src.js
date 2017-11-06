@@ -16,6 +16,7 @@ module.exports = (appData) => {
 				<title>Node School App</title>
 				<link rel='shortcut icon' href='/public/favicon.ico' />
 				<link rel='stylesheet' href='index.css' />
+				<script src='https://webasr.yandex.net/jsapi/v1/webspeechkit.js'></script>
 				<style
 					type='text/css'
 					dangerouslySetInnerHTML={{__html: css}}>

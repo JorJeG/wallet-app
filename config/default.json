@@ -4,6 +4,6 @@
     "serve_static_files": true
   },
   "db": {
-    "url": "mongodb://localhost/school-wallet"
+    "url": "mongodb://localhost/wallet-app"
   }
 }

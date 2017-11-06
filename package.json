@@ -6,10 +6,10 @@
   "scripts": {
     "build": "webpack",
     "tls:generate": "scripts/tls/generate.sh",
-    "start": "NODE_PATH=. node ./source/app.js",
-    "start:https": "NODE_HTTPS=1 npm start",
-    "watch": "NODE_PATH=. nodemon --watch source ./source/app.js",
-    "test": "NODE_PATH=. jest"
+    "start": "cross-env NODE_PATH=. node ./source/app.js",
+    "start:https": "cross-env NODE_HTTPS=1 npm start",
+    "watch": "cross-env NODE_PATH=. nodemon --watch source ./source/app.js",
+    "test": "cross-env NODE_PATH=. jest"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "card-info": "git+https://github.com/iniel/card-info.git",
+    "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
     "emotion": "^7.2.0",
     "emotion-server": "^7.3.2",
