@@ -27,7 +27,6 @@ const errorController = require('./controllers/error');
 const ApplicationError = require('libs/application-error');
 const CardsModel = require('source/models/cards');
 const TransactionsModel = require('source/models/transactions');
-const UsersModel = require('source/models/users');
 
 const getTransactionsController = require('./controllers/transactions/get-transactions');
 
@@ -35,7 +34,6 @@ const mongoose = require('mongoose');
 
 mongoose.connect(config.get('db.url'), {useMongoClient: true});
 mongoose.Promise = global.Promise;
-
 
 const app = new Koa();
 
