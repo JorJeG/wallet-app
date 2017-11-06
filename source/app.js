@@ -40,10 +40,6 @@ const session = require('koa-session');
 const YandexStrategy = require('passport-yandex').Strategy;
 
 // AUTH
-
-// keep user in memory, for now
-let user = null;
-
 app.keys = ['secret'];
 app.use(session({}, app));
 
@@ -64,16 +60,20 @@ passport.use(new YandexStrategy(
 	},
 	((accessToken, refreshToken, profile, done) => {
 		// assign kept in memory user to profile, returned from oauth
-		user = profile;
+		// for a real app, user must be put in the database
+		// e.g. User.createOrUpdate(profile)
 		done(null, profile);
 	})
 ));
 
 passport.serializeUser((user, done) => {
+	// for a real app, an ID should be serialzed
 	done(null, JSON.stringify(user));
 });
 
 passport.deserializeUser((data, done) => {
+	// for a real app, a user must be found in a database
+	// e.g. User.find(data)
 	try {
 		done(null, JSON.parse(data));
 	} catch (err) {
@@ -105,6 +105,7 @@ function getView(viewId) {
 
 async function getData(ctx) {
 	let loggedIn = null;
+	const user = ctx.state.user;
 
 	// user from memory
 	if (user) {
@@ -128,7 +129,6 @@ async function getData(ctx) {
 
 router.get('/logout', (ctx) => {
 	ctx.logout();
-	user = null;
 	ctx.status = 200;
 });
 
@@ -143,18 +143,27 @@ router.get('/', async (ctx) => {
 	ctx.body = indexViewHtml;
 });
 
-router.get('/cards/', getCardsController);
-router.post('/cards/', createCardController);
-router.delete('/cards/:id', deleteCardController);
+const registeredOnly = async (ctx, controllerAction) => {
+	if (ctx.isAuthenticated()) {
+		return controllerAction(ctx);
+	}
+	ctx.status = 403;
+	ctx.body = 403;
+};
 
-router.get('/cards/:id/transactions/', getTransactionController);
-router.post('/cards/:id/transactions/', createTransactionsController);
+router.get('/cards/', (ctx) => registeredOnly(ctx, getCardsController));
 
-router.post('/cards/:id/transfer', cardToCard);
-router.post('/cards/:id/pay', cardToMobile);
-router.post('/cards/:id/fill', mobileToCard);
+router.post('/cards/', (ctx) => registeredOnly(ctx, createCardController));
+router.delete('/cards/:id', (ctx) => registeredOnly(ctx, deleteCardController));
 
-router.get('/transactions/', getTransactionsController);
+router.get('/cards/:id/transactions/', (ctx) => registeredOnly(ctx, getTransactionController));
+router.post('/cards/:id/transactions/', (ctx) => registeredOnly(ctx, createTransactionsController));
+
+router.post('/cards/:id/transfer', (ctx) => registeredOnly(ctx, cardToCard));
+router.post('/cards/:id/pay', (ctx) => registeredOnly(ctx, cardToMobile));
+router.post('/cards/:id/fill', (ctx) => registeredOnly(ctx, mobileToCard));
+
+router.get('/transactions/', (ctx) => registeredOnly(ctx, getTransactionsController));
 
 router.all('/error', errorController);
 
