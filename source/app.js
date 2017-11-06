@@ -35,6 +35,68 @@ mongoose.Promise = global.Promise;
 
 const app = new Koa();
 
+const passport = require('koa-passport');
+const session = require('koa-session');
+const YandexStrategy = require('passport-yandex').Strategy;
+
+// AUTH
+
+// keep user in memory, for now
+let user = null;
+
+app.keys = ['secret'];
+app.use(session({}, app));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const {
+	YANDEX_CLIENT_ID,
+	YANDEX_CLIENT_SECRET,
+	YANDEX_CALLBACK_URL
+} = config.get('oauth');
+
+passport.use(new YandexStrategy(
+	{
+		clientID: YANDEX_CLIENT_ID,
+		clientSecret: YANDEX_CLIENT_SECRET,
+		callbackURL: YANDEX_CALLBACK_URL,
+	},
+	((accessToken, refreshToken, profile, done) => {
+		// assign kept in memory user to profile, returned from oauth
+		user = profile;
+		done(null, profile);
+	})
+));
+
+passport.serializeUser((user, done) => {
+	done(null, JSON.stringify(user));
+});
+
+passport.deserializeUser((data, done) => {
+	try {
+		done(null, JSON.parse(data));
+	} catch (err) {
+		done(err);
+	}
+});
+
+router.get(
+	'/auth/yandex',
+	passport.authenticate('yandex')
+);
+
+router.get(
+	'/auth/yandex/callback',
+	passport.authenticate('yandex'),
+	(ctx) => {
+		// Successful authentication, redirect home.
+		ctx.redirect('/');
+		ctx.status = 301;
+	}
+);
+
+
 function getView(viewId) {
 	const viewPath = path.resolve(__dirname, 'views', `${viewId}.server.js`);
 	delete require.cache[require.resolve(viewPath)];
@@ -42,24 +104,33 @@ function getView(viewId) {
 }
 
 async function getData(ctx) {
-	// const user = {
-	// 	login: 'samuel_johnson',
-	// 	name: 'Samuel Johnson',
-	// 	mail: 'georg_starkov@mail.ru',
-	// 	mailing: false
-	// };
+	let loggedIn = null;
 
-	const user = null;
+	// user from memory
+	if (user) {
+		loggedIn = {
+			login: user.username,
+			name: `${user.name.givenName} ${user.name.familyName}`,
+			mail: user.emails[0],
+			avatar_url: `https://avatars.yandex.net/get-yapic/${user._json.default_avatar_id}/islands-200`,
+		};
+	}
 
 	const cards = await ctx.cardsModel.getAll();
 	const transactions = await ctx.transactionsModel.getAll({time: -1});
 
 	return {
-		user,
+		user: loggedIn,
 		cards,
 		transactions
 	};
 }
+
+router.get('/logout', (ctx) => {
+	ctx.logout();
+	user = null;
+	ctx.status = 200;
+});
 
 // Сохраним параметр id в ctx.params.id
 router.param('id', (id, ctx, next) => next());
