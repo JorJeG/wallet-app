@@ -71,13 +71,12 @@ const CardsBar = ({
 		);
 	}
 
-	if (isCardAdding) {
+	if (isCardAdding || cardsList.length === 0) {
 		return (
 			<Layout>
 				<Logo />
 				<CardAdd
 					onAdd={onAdd}
-					data={cardsList[0]}
 					onCancelClick={onCancelClick} />
 				<Footer>Yamoney Node School</Footer>
 			</Layout>

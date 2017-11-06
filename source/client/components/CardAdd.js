@@ -239,7 +239,6 @@ class CardAdd extends Component {
 }
 
 CardAdd.propTypes = {
-	data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 	onCancelClick: PropTypes.func.isRequired,
 	onAdd: PropTypes.func.isRequired
 };
