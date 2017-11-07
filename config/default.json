@@ -2,7 +2,10 @@
   "server": {
     "port": 3001,
     "serve_static_files": true
-  },
+	},
+	"mailing": {
+		"mail": "sin4end@gmail.com"
+	},
   "db": {
     "url": "mongodb://localhost/school-wallet"
 	},

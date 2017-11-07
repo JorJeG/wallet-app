@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'emotion/react';
 import propTypes from 'prop-types';
 
-import {recognizeSpeech} from '../../utils';
+import SpeechRecognize from '../../utils';
 
 const Microphone = styled.div`
 	position: fixed;
@@ -71,35 +71,43 @@ export default class SpeechButton extends React.Component {
 	talk(isSpeaking) {
 		this.props.onClick();
 
-		let tryCount = 0;
-		if (isSpeaking || this.state.isListening) return;
+		// let tryCount = 0;
+		// if (isSpeaking || this.state.isListening) return;
 
-		this.listening = true;
+		// this.listening = true;
 
-		const recognizePhrase = () => {
-			recognizeSpeech().then((transcript) => {
-				this.reply = transcript;
-				if (transcript === 'Обращайся, дружище') {
-					this.listening = false;
-				} else {
-					recognizePhrase();
-				}
-			}).catch((e) => {
-				this.handleSpeechException(e);
-				if (tryCount < 2) {
-					tryCount += 1;
-					recognizePhrase();
-				} else {
-					this.listening = false;
-				}
-			});
-		};
+		const recognizer = new SpeechRecognize(this.props.user);
+		recognizer.start().then((reply) => {
+			this.reply = reply;
+			window.setTimeout(this.props.onClick, 2000);
+		}).catch((err) => {
+			this.reply = err;
+		});
 
-		recognizePhrase();
+		// const recognizePhrase = () => {
+		// 	recognizeSpeech().then((transcript) => {
+		// 		this.reply = transcript;
+		// 		if (transcript === 'Обращайся, дружище') {
+		// 			this.listening = false;
+		// 		} else {
+		// 			recognizePhrase();
+		// 		}
+		// 	}).catch((e) => {
+		// 		this.handleSpeechException(e);
+		// 		if (tryCount < 2) {
+		// 			tryCount += 1;
+		// 			recognizePhrase();
+		// 		} else {
+		// 			this.listening = false;
+		// 		}
+		// 	});
+		// };
+
+		// recognizePhrase();
 	}
 
 	render() {
-		const text = 'Привет! Я понимаю фразы: "Переведи мне денег на телефон", "Привет" и "Спасибо, хватит".';
+		const text = 'Привет!';
 
 		return (
 			<Microphone

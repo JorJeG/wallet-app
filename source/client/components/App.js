@@ -294,6 +294,7 @@ class App extends Component {
 
 				<SpeechButton
 					isSpeaking={this.state.isSpeaking}
+					user={this.state.user}
 					onClick={() => this.setState({isSpeaking: !this.state.isSpeaking})} />
 
 				<SpeechOverlay

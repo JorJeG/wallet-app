@@ -23,25 +23,25 @@ class Transactions extends DbModel {
 		const newTransaction = Object.assign({}, transaction, {
 			id: await this._generateId()
 		});
-		if (user.mailing) {
-			const transport = nodemailer.createTransport(smtpTransport({
-				service: 'Mail.ru',
-				auth: {
-					user: config.get('mailing.mail'),
-					pass: config.get('mailing.pass')
-				}
-			}));
-			const render = template(transaction);
-			transport.sendMail({
-				from: config.get('mailing.from'),
-				to: user.mail,
-				subject: 'Вы воспользовались услугой',
-				forceEmbeddedImages: true,
-				html: render,
-			}, (err) => {
-				if (err) return err.message;
-			});
-		}
+		// if (user.mailing) {
+		// 	const transport = nodemailer.createTransport(smtpTransport({
+		// 		service: 'Mail.ru',
+		// 		auth: {
+		// 			user: config.get('mailing.mail'),
+		// 			pass: config.get('mailing.pass')
+		// 		}
+		// 	}));
+		// 	const render = template(transaction);
+		// 	transport.sendMail({
+		// 		from: config.get('mailing.from'),
+		// 		to: user.mail,
+		// 		subject: 'Вы воспользовались услугой',
+		// 		forceEmbeddedImages: true,
+		// 		html: render,
+		// 	}, (err) => {
+		// 		if (err) return err.message;
+		// 	});
+		// }
 		await this._insert(newTransaction);
 		return newTransaction;
 	}
