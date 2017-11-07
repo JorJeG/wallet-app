@@ -20,12 +20,29 @@ class DbModel extends Model {
 		return data;
 	}
 
+	async getAllWhere(cond, sort = {}) {
+		const data = await this._MongooseModel
+			.find({})
+			.where('owner').equals(cond)
+			.sort(sort)
+			.lean()
+			.exec();
+		return data;
+	}
+
 	async get(id) {
 		const data = await this._MongooseModel
 			.findOne({id})
 			.lean()
 			.exec();
 		return data;
+	}
+	findOrCreate(key, data, cb) {
+		return this._MongooseModel.findOneAndUpdate(
+			key,
+			data,
+			{new: true, upsert: true}
+		);
 	}
 
 	async getBy(cond) {
@@ -56,7 +73,7 @@ class DbModel extends Model {
 			.limit(1)
 			.lean()
 			.exec();
-		return data[0].id + 1;
+		return !(data.length === 0) ? data[0].id + 1 : 1;
 	}
 
 	async _insert(item) {

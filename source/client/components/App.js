@@ -157,7 +157,7 @@ class App extends Component {
 	* Функция вызывает при успешной транзакции
 	*/
 	onTransaction() {
-		axios.get('/cards').then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({cardsList});
 
@@ -172,17 +172,17 @@ class App extends Component {
 	* Функция вызывает при успешном добавлении карты
 	*/
 	onAdd() {
-		axios.get('/cards').then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({cardsList, isCardAdding: false});
-		});
+		}).then(() => this.onTransaction());
 	}
 
 	/**
 	* Функция вызывает при успешном удалении карты
 	*/
 	onDelete() {
-		axios.get('/cards').then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({
 				cardsList,
@@ -214,6 +214,17 @@ class App extends Component {
 		});
 	}
 
+	checkEmpty() {
+		axios.get(`/cards/`).then(({data}) => {
+			const cardsList = App.prepareCardsData(data);
+			if (cardsList.length === 0) {
+				this.setState({
+					isCardAdding: true
+				});
+			}
+		});
+	}
+
 	/**
 	 * Удаление карты
 	 * @param {Number} index Индекс карты
@@ -221,6 +232,7 @@ class App extends Component {
 	deleteCard(id) {
 		axios
 			.delete(`/cards/${id}`)
+			.then(() => this.checkEmpty())
 			.then(() => this.onDelete());
 	}
 	/**
@@ -240,12 +252,10 @@ class App extends Component {
 			removeCardId,
 			user
 		} = this.state;
+		const userInBase = this.props.data.savedUser;
 		const activeCard = cardsList[activeCardIndex];
 
 		const inactiveCardsList = cardsList.filter((card, index) => (index === activeCardIndex ? false : card));
-		const filteredHistory = cardHistory.filter((data) => {
-			return Number(data.cardId) === activeCard.id;
-		});
 
 		if (!user) {
 			return (
@@ -258,6 +268,7 @@ class App extends Component {
 		return (
 			<Wallet>
 				<CardsBar
+					user={userInBase}
 					activeCardIndex={activeCardIndex}
 					removeCardId={removeCardId}
 					cardsList={cardsList}
@@ -272,23 +283,28 @@ class App extends Component {
 					deleteCard={(index) => this.deleteCard(index)}
 					onChangeBarMode={(event, index) => this.onChangeBarMode(event, index)} />
 				<CardPane>
-					<Header activeCard={activeCard}>
+					<Header cardsList={cardsList} activeCard={activeCard}>
 						<UserInfo user={user} onLogout={() => this.onLogout()} />
 					</Header>
 					<Workspace>
-						<History cardHistory={filteredHistory} />
-						<Prepaid
-							user={user}
+						{cardsList.length > 0 && <History cardHistory={cardHistory.filter((data) => {
+							return Number(data.cardId) === activeCard.id;
+						})} />}
+						{cardsList.length > 1 && <Prepaid
+							user={userInBase}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
 							onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
-							onTransaction={() => this.onTransaction()} />
-						<MobilePayment user={user} activeCard={activeCard} onTransaction={() => this.onTransaction()} />
-						<Withdraw
-							user={user}
+							onTransaction={() => this.onTransaction()} />}
+						{cardsList.length > 0 && <MobilePayment
+							user={userInBase}
+							activeCard={activeCard}
+							onTransaction={() => this.onTransaction()} />}
+						{cardsList.length > 1 && <Withdraw
+							user={userInBase}
 							activeCard={activeCard}
 							inactiveCardsList={inactiveCardsList}
-							onTransaction={() => this.onTransaction()} />
+							onTransaction={() => this.onTransaction()} />}
 					</Workspace>
 				</CardPane>
 

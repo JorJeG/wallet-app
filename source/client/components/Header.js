@@ -22,12 +22,13 @@ const BalanceSum = styled.span`
 	font-weight: bold;
 `;
 
-const Header = ({activeCard, user, children}) => (
+const Header = ({activeCard, user, children, cardsList}) => (
 	<HeaderLayout>
+		{cardsList.length > 0 &&
 		<Balance>
 			{`${activeCard.bankName}: `}
 			<BalanceSum>{`${activeCard.balance} ₽`}</BalanceSum>
-		</Balance>
+		</Balance>}
 		{children}
 	</HeaderLayout>
 );

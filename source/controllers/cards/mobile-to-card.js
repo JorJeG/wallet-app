@@ -4,7 +4,13 @@ module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
 	const operation = ctx.request.body;
-	const {phoneNumber, sum, mail, mailing} = operation;
+	const {
+		phoneNumber,
+		sum,
+		mail,
+		mailing,
+		_id
+	} = operation;
 
 	ctx.cardsModel.refill(cardId, sum);
 
@@ -13,7 +19,8 @@ module.exports = async (ctx) => {
 		type: 'paymentMobile',
 		data: {phoneNumber},
 		time: new Date().toISOString(),
-		sum
+		sum,
+		owner: _id
 	}, {mail, mailing});
 
 	ctx.status = 200;
