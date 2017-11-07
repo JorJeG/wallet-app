@@ -43,12 +43,17 @@ Bot.onText(/^\/balance/, async (msg, match) => {
 		chats[userId] = {};
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
-	const userCardsId = user.card_id;
+	if (user) {
+		const userCardsId = user.card_id;
 
-	const allCards = await cardsModel.getAll();
-	showCards(userId, userCardsId, allCards, 'Выберите карту:');
+		const allCards = await cardsModel.getAll();
+		showCards(userId, userCardsId, allCards, 'Выберите карту:');
 
-	chats[userId].operator = 'balance';
+		chats[userId].operator = 'balance';
+	}
+	else {
+		Bot.sendMessage(userId, 'Ваш Telegram аккаунт не привязан ни к одному из пользователей в приложении');
+	}
 });
 
 Bot.onText(/^\/cardToMobile (.+)/, async (msg, match) => {
@@ -57,14 +62,19 @@ Bot.onText(/^\/cardToMobile (.+)/, async (msg, match) => {
 		chats[userId] = {};
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
-	const userCardsId = user.card_id;
-	chats[userId].sum = match[1];
-	chats[userId].phoneNumber = user.phoneNumber;
+	if (user) {
+		const userCardsId = user.card_id;
+		chats[userId].sum = match[1];
+		chats[userId].phoneNumber = user.phoneNumber;
 
-	const allCards = await cardsModel.getAll();
-	showCards(userId, userCardsId, allCards, 'Выберите карту, с которой произвести перевод на мобильный телефон:');
+		const allCards = await cardsModel.getAll();
+		showCards(userId, userCardsId, allCards, 'Выберите карту, с которой произвести перевод на мобильный телефон:');
 
-	chats[userId].operator = 'cardToMobile';
+		chats[userId].operator = 'cardToMobile';
+	}
+	else {
+		Bot.sendMessage(userId, 'Ваш Telegram аккаунт не привязан ни к одному из пользователей в приложении');
+	}
 });
 
 Bot.onText(/^\/cardToCard (.+)/, async (msg, match) => {
@@ -73,14 +83,19 @@ Bot.onText(/^\/cardToCard (.+)/, async (msg, match) => {
 		chats[userId] = {};
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
-	const userCardsId = user.card_id;
-	chats[userId].sum = match[1];
+	if (user) {
+		const userCardsId = user.card_id;
+		chats[userId].sum = match[1];
 
-	const allCards = await cardsModel.getAll();
-	showCards(userId, userCardsId, allCards, 'Выберите карту, с которой произвести перевод и карту,' +
-		' на которую произвести перевод через пробел (Например, "1 2"):');
+		const allCards = await cardsModel.getAll();
+		showCards(userId, userCardsId, allCards, 'Выберите карту, с которой произвести перевод и карту,' +
+			' на которую произвести перевод через пробел (Например, "1 2"):');
 
-	chats[userId].operator = 'cardToCard';
+		chats[userId].operator = 'cardToCard';
+	}
+	else {
+		Bot.sendMessage(userId, 'Ваш Telegram аккаунт не привязан ни к одному из пользователей в приложении');
+	}
 });
 
 Bot.onText(/^\/mobileToCard (.+)/, async (msg, match) => {
@@ -89,14 +104,19 @@ Bot.onText(/^\/mobileToCard (.+)/, async (msg, match) => {
 		chats[userId] = {};
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
-	const userCardsId = user.card_id;
-	chats[userId].sum = match[1];
-	chats[userId].phoneNumber = user.phoneNumber;
+	if (user) {
+		const userCardsId = user.card_id;
+		chats[userId].sum = match[1];
+		chats[userId].phoneNumber = user.phoneNumber;
 
-	const allCards = await cardsModel.getAll();
-	showCards(userId, userCardsId, allCards, 'Выберите карту, на которую произвести перевод:');
+		const allCards = await cardsModel.getAll();
+		showCards(userId, userCardsId, allCards, 'Выберите карту, на которую произвести перевод:');
 
-	chats[userId].operator = 'mobileToCard';
+		chats[userId].operator = 'mobileToCard';
+	}
+	else {
+		Bot.sendMessage(userId, 'Ваш Telegram аккаунт не привязан ни к одному из пользователей в приложении');
+	}
 });
 
 Bot.onText(/^\/help/, (msg) => {
