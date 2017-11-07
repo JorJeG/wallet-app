@@ -111,6 +111,7 @@ async function getData(ctx) {
 	let cards = [];
 	let transactions = [];
 	let savedUser = null;
+	console.log(user);
 
 	// user from memory
 	if (user) {
@@ -120,8 +121,8 @@ async function getData(ctx) {
 			mail: user.emails[0],
 			avatar_url: `https://avatars.yandex.net/get-yapic/${user._json.default_avatar_id}/islands-200`,
 		};
-		savedUser = ctx.userModel.getBy({login: loggedIn.login});
-		if (typeof savedUser === 'undefined') {
+		savedUser = await ctx.userModel.getBy({login: loggedIn.login});
+		if (!savedUser) {
 			const newUser = ctx.userModel.create(loggedIn);
 			cards = await ctx.cardsModel.getAllWhere(newUser._id);
 			transactions = await ctx.transactionsModel.getAllWhere(newUser._id, {time: -1});

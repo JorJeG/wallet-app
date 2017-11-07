@@ -5,7 +5,7 @@ const User = mongoose.model('User', {
 	yandex_id: String,
 	name: String,
 	mail: mongoose.Schema.Types.Mixed,
-	telegramID: Number,
+	telegram_id: Number,
 	avatar_url: String,
 	phoneNumbers: [{
 		type: String

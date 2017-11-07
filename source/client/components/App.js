@@ -261,7 +261,7 @@ class App extends Component {
 
 		const inactiveCardsList = cardsList.filter((card, index) => (index === activeCardIndex ? false : card));
 
-		if (!userInBase) {
+		if (!user) {
 			return (
 				<Wallet>
 					<Authorize />
