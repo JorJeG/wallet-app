@@ -110,7 +110,7 @@ class App extends Component {
 			removeCardId: 0,
 			isCardRemoving: false,
 			isCardsEditable: false,
-			isCardAdding: true,
+			isCardAdding: false,
 			isSpeaking: false,
 			user: props.data.user,
 		};
@@ -301,7 +301,7 @@ class App extends Component {
 							onCardChange={(newActiveCardIndex) => this.onCardChange(newActiveCardIndex)}
 							onTransaction={() => this.onTransaction()} />}
 						{cardsList.length > 0 && <MobilePayment
-							user={user}
+							user={userInBase}
 							activeCard={activeCard}
 							onTransaction={() => this.onTransaction()} />}
 						{cardsList.length > 1 && <Withdraw
