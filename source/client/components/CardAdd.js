@@ -4,6 +4,7 @@ import styled from 'emotion/react';
 import axios from 'axios';
 import CardInfo from 'card-info';
 import {Button, Input} from './';
+import utils from '../../../libs/utils';
 
 const CardLayout = styled.div`
 	position: relative;
@@ -108,6 +109,9 @@ class CardAdd extends Component {
 			}
 		};
 	}
+	static valid(value) {
+		return utils.validateCardNumber(value);
+	}
 	/**
 	 * Конструктор
 	 *
@@ -157,7 +161,11 @@ class CardAdd extends Component {
 				invalid: true
 			});
 		}
-		if (formattedValue.length > 5) {
+		if (!CardAdd.valid(formattedValue) && formattedValue.length === 16) {
+			this.setState({
+				invalid: true
+			});
+		} else if (formattedValue.length > 5) {
 			if (CardAdd.prepareCardsData(value).bankName === null) {
 				this.setState({
 					invalid: true
@@ -180,9 +188,10 @@ class CardAdd extends Component {
 	 */
 	createCard() {
 		const {cardNumber, balance} = this.state;
+		const {_id} = this.props.user;
 
 		axios
-			.post('/cards/', {cardNumber, balance})
+			.post('/cards/', {cardNumber, balance, owner: _id})
 			.then(() => this.props.onAdd());
 	}
 	render() {
@@ -221,7 +230,7 @@ class CardAdd extends Component {
 					<Button
 						bgColor='#d3292a'
 						textColor='#fff'
-						disabled={!isCompleted}
+						disabled={!isCompleted || invalid}
 						onClick={() => this.createCard()}>
 						Добавить
 					</Button>

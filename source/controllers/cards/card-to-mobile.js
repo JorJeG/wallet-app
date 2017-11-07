@@ -6,7 +6,13 @@ module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
 	const operation = ctx.request.body;
-	const {sum, phoneNumber, mail, mailing} = operation;
+	const {
+		sum,
+		phoneNumber,
+		mail,
+		mailing,
+		_id
+	} = operation;
 
 	ctx.cardsModel.withdraw(cardId, parseInt(sum, 10) + commission);
 
@@ -15,7 +21,8 @@ module.exports = async (ctx) => {
 		type: 'paymentMobile',
 		data: {phoneNumber},
 		time: new Date().toISOString(),
-		sum
+		sum,
+		owner: _id
 	}, {mail, mailing});
 
 	const activeCard = await ctx.cardsModel.get(cardId);

@@ -63,7 +63,7 @@ Bot.onText(/^\/cardToMobile (.+)/, async (msg, match) => {
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
 	if (user) {
-		const userCardsId = user.card_id;
+		const userCardsId = cardsModel.getBy({owner: user._id});//user.card_id;
 		chats[userId].sum = match[1];
 		chats[userId].phoneNumber = user.phoneNumber;
 

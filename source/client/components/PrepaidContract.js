@@ -123,6 +123,7 @@ class PrepaidContract extends Component {
 
 		const {activeCardIndex, sum} = this.state;
 		const {activeCard, inactiveCardsList} = this.props;
+		const {_id, name, mail, mailing} = this.props.user;
 		const selectedCard = inactiveCardsList[activeCardIndex];
 
 		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
@@ -136,9 +137,10 @@ class PrepaidContract extends Component {
 			data: {
 				target: selectedCard.id,
 				sum,
-				user: this.props.user.name,
-				mail: this.props.user.mail,
-				mailing: this.props.user.mailing
+				_id,
+				name,
+				mail,
+				mailing
 			}
 		};
 

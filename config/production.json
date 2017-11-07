@@ -5,5 +5,8 @@
   },
   "db": {
     "url": "mongodb://localhost/school-wallet"
-  }
+	},
+	"oauth": {
+		"YANDEX_CALLBACK_URL": "https://wallet-app.ga/auth/yandex/callback"
+	}
 }

@@ -91,6 +91,7 @@ class Withdraw extends Component {
 
 		const {selectedCard, sum} = this.state;
 		const {activeCard} = this.props;
+		const {_id, name, mail, mailing} = this.props.user;
 
 		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
 		if (!isNumber || sum <= 0) {
@@ -103,9 +104,10 @@ class Withdraw extends Component {
 			data: {
 				target: selectedCard.id,
 				sum,
-				user: this.props.user.name,
-				mail: this.props.user.mail,
-				mailing: this.props.user.mailing
+				_id,
+				name,
+				mail,
+				mailing
 			}
 		};
 

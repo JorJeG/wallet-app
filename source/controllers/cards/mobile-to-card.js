@@ -4,7 +4,14 @@ module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
 	const operation = ctx.request.body;
-	const {sum, phoneNumber, mail, mailing} = operation;
+	const {
+		phoneNumber,
+		sum,
+		mail,
+		mailing,
+		_id
+	} = operation;
+
 	ctx.cardsModel.refill(cardId, sum);
 
 	const transaction = await ctx.transactionsModel.create({
@@ -12,7 +19,8 @@ module.exports = async (ctx) => {
 		type: 'paymentMobile',
 		data: {phoneNumber},
 		time: new Date().toISOString(),
-		sum
+		sum,
+		owner: _id
 	}, {mail, mailing});
 
 	const activeCard = await ctx.cardsModel.get(cardId);
