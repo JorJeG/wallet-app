@@ -96,6 +96,7 @@ passport.deserializeUser(async (id, done) => {
 	}
 });
 
+
 router.get(
 	'/auth/yandex',
 	passport.authenticate('yandex')
@@ -121,6 +122,9 @@ function getView(viewId) {
 async function getData(ctx) {
 	let loggedIn = null;
 	const user = ctx.state.user;
+	let cards = [];
+	let transactions = [];
+	let savedUser = null;
 
 	// user from memory
 	if (user) {
@@ -130,15 +134,17 @@ async function getData(ctx) {
 			mail: user.email,
 			avatar_url: `https://avatars.yandex.net/get-yapic/${user.avatar_id}/islands-200`,
 		};
+		savedUser = await User.getBy({yandex_id: user.yandex_id});
+		cards = await ctx.cardsModel.getAllWhere(savedUser._id);
+		transactions = await ctx.transactionsModel.getAllWhere(savedUser._id, {time: -1});
 	}
 
-	const cards = await ctx.cardsModel.getAll();
-	const transactions = await ctx.transactionsModel.getAll({time: -1});
 
 	return {
 		user: loggedIn,
 		cards,
-		transactions
+		transactions,
+		savedUser
 	};
 }
 
@@ -207,7 +213,6 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
 	ctx.cardsModel = new CardsModel();
 	ctx.transactionsModel = new TransactionsModel();
-
 	await next();
 });
 

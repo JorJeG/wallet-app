@@ -4,8 +4,8 @@ const ApplicationError = require('libs/application-error');
 const _ = require('lodash');
 
 const allowedTypes = ['prepaidCard', 'paymentMobile', 'card2Card'];
-const requiredFields = ['sum', 'type', 'data'];
-const postTransactionFields = ['type', 'time', 'sum', 'data'];
+const requiredFields = ['sum', 'type', 'data', 'owner'];
+const postTransactionFields = ['type', 'time', 'sum', 'data', 'owner'];
 
 module.exports = async (ctx) => {
 	const transaction = _.pick(ctx.request.body, postTransactionFields);

@@ -52,7 +52,8 @@ const CardsBar = ({
 	removeCardId,
 	deleteCard,
 	onCancelClick,
-	onAdd
+	onAdd,
+	user
 }) => {
 	const onCardClick = (index) => {
 		onCardChange && onCardChange(index);
@@ -71,11 +72,12 @@ const CardsBar = ({
 		);
 	}
 
-	if (isCardAdding) {
+	if (isCardAdding || cardsList.length === 0) {
 		return (
 			<Layout>
 				<Logo />
 				<CardAdd
+					user={user}
 					onAdd={onAdd}
 					data={cardsList[0]}
 					onCancelClick={onCancelClick} />

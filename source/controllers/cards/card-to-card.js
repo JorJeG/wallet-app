@@ -4,7 +4,13 @@ module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 
 	const operation = ctx.request.body;
-	const {target, sum, mail, mailing} = operation;
+	const {
+		target,
+		sum,
+		mail,
+		mailing,
+		_id
+	} = operation;
 
 	await ctx.cardsModel.withdraw(cardId, sum);
 	await ctx.cardsModel.refill(target, sum);
@@ -19,7 +25,8 @@ module.exports = async (ctx) => {
 			cardNumber: targetCard.cardNumber
 		},
 		time: new Date().toISOString(),
-		sum
+		sum,
+		owner: _id
 	}, {mail, mailing});
 
 	ctx.status = 200;

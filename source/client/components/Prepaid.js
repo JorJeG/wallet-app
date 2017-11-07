@@ -43,7 +43,7 @@ class Prepaid extends Component {
 	 */
 	render() {
 		const {transaction} = this.state;
-		const {activeCard, inactiveCardsList} = this.props;
+		const {activeCard, inactiveCardsList, user} = this.props;
 
 		if (this.state.stage === 'success') {
 			return (
@@ -53,7 +53,7 @@ class Prepaid extends Component {
 
 		return (
 			<PrepaidContract
-				user={this.props.user}
+				user={user}
 				activeCard={activeCard}
 				inactiveCardsList={inactiveCardsList}
 				onPaymentSuccess={(transaction) => this.onPaymentSuccess(transaction)} />

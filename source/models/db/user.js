@@ -1,38 +1,18 @@
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User', {
-	username: {
-		type: String,
-		required: true
-	},
-	yandex_id: {
-		type: Number,
-		required: true
-	},
-	realName: {
-		type: String,
-		required: true
-	},
-	email: {
-		type: String,
-		required: true
-	},
-	token: {
-		type: String,
-		required: true
-	},
-	phoneNumber: {
-		type: String,
-		required: true
-	},
-	card_id: {
-		type: [Number],
-		required: true
-	},
+	username: String,
+	yandex_id: Number,
+	realName: String,
+	email: String,
 	telegram_id: Number,
-	avatar_id: {
-		type: String,
-		required: true,
+	avatar_id: String,
+	phoneNumbers: [{
+		type: String
+	}],
+	mailing: Boolean,
+	date: {
+		type: Date, default: Date.now()
 	}
 });
 
