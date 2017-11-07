@@ -53,6 +53,14 @@ class DbModel extends Model {
 		return data;
 	}
 
+	findOrCreate(key, data, cb) {
+		return this._MongooseModel.findOneAndUpdate(
+			key,
+			data,
+			{new: true, upsert: true}
+		);
+	}
+
 	/**
 	 * Генерирует новый id для записи
 	 * @return {Number}

@@ -161,6 +161,8 @@ router.get('/', async (ctx) => {
 	const indexView = getView('index');
 	const indexViewHtml = renderToStaticMarkup(indexView(data));
 
+	console.log(ctx.state.user);
+
 	ctx.body = indexViewHtml;
 });
 
