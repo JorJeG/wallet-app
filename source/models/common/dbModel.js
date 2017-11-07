@@ -37,6 +37,13 @@ class DbModel extends Model {
 			.exec();
 		return data;
 	}
+	findOrCreate(key, data, cb) {
+		return this._MongooseModel.findOneAndUpdate(
+			key,
+			data,
+			{new: true, upsert: true}
+		);
+	}
 
 	async getBy(cond) {
 		const data = await this._MongooseModel

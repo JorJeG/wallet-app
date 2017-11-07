@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User', {
-	login: String,
-	yandex_id: String,
-	name: String,
-	mail: mongoose.Schema.Types.Mixed,
+	username: String,
+	yandex_id: Number,
+	realName: String,
+	email: String,
 	telegram_id: Number,
-	avatar_url: String,
+	avatar_id: String,
 	phoneNumbers: [{
 		type: String
 	}],
