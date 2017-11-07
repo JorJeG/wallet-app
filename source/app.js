@@ -103,7 +103,7 @@ router.get(
 
 router.get(
 	'/auth/yandex/callback',
-	passport.authenticate('yandex', {failureRedirect: '/blya'}),
+	passport.authenticate('yandex', {failureRedirect: '/?withError'}),
 	(ctx) => {
 		// Successful authentication, redirect home.
 		ctx.redirect('/');
