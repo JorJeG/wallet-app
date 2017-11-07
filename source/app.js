@@ -108,8 +108,8 @@ function getView(viewId) {
 async function getData(ctx) {
 	let loggedIn = null;
 	const user = ctx.state.user;
-	let cards = await ctx.cardsModel.getAll();
-	let transactions = await ctx.transactionsModel.getAll({time: -1});
+	let cards = [];
+	let transactions = [];
 	let savedUser = null;
 
 	// user from memory
@@ -120,12 +120,15 @@ async function getData(ctx) {
 			mail: user.emails[0],
 			avatar_url: `https://avatars.yandex.net/get-yapic/${user._json.default_avatar_id}/islands-200`,
 		};
-		savedUser = await ctx.userModel.getBy({login: loggedIn.login});
-		if (!savedUser) {
-			savedUser = await ctx.userModel.create(loggedIn);
+		savedUser = ctx.userModel.getBy({login: loggedIn.login});
+		if (typeof savedUser === 'undefined') {
+			const newUser = ctx.userModel.create(loggedIn);
+			cards = await ctx.cardsModel.getAllWhere(newUser._id);
+			transactions = await ctx.transactionsModel.getAllWhere(newUser._id, {time: -1});
+		} else {
+			cards = await ctx.cardsModel.getAllWhere(savedUser._id);
+			transactions = await ctx.transactionsModel.getAllWhere(savedUser._id, {time: -1});
 		}
-		cards = await ctx.cardsModel.getAllWhere(savedUser._id);
-		transactions = await ctx.transactionsModel.getAllWhere(savedUser._id, {time: -1});
 	}
 
 
