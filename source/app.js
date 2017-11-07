@@ -44,7 +44,6 @@ const YandexStrategy = require('passport-yandex').Strategy;
 const User = new UsersModel();
 app.keys = ['secret'];
 app.use(session({}, app));
-app.proxy = true;
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -88,6 +87,7 @@ passport.deserializeUser(async (id, done) => {
 		done(null, null);
 		return;
 	}
+
 	try {
 		const user = await User.getBy({yandex_id: userId});
 		done(null, user);
@@ -104,7 +104,7 @@ router.get(
 
 router.get(
 	'/auth/yandex/callback',
-	passport.authenticate('yandex', {failureRedirect: '/blya'}),
+	passport.authenticate('yandex', {failureRedirect: '/?withError'}),
 	(ctx) => {
 		// Successful authentication, redirect home.
 		ctx.redirect('/');
@@ -125,7 +125,6 @@ async function getData(ctx) {
 	let cards = [];
 	let transactions = [];
 	let savedUser = null;
-	console.log(user);
 
 	// user from memory
 	if (user) {
