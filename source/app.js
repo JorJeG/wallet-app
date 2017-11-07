@@ -25,6 +25,7 @@ const errorController = require('./controllers/error');
 const ApplicationError = require('libs/application-error');
 const CardsModel = require('source/models/cards');
 const TransactionsModel = require('source/models/transactions');
+const UsersModel = require('source/models/users');
 
 const getTransactionsController = require('./controllers/transactions/get-transactions');
 
@@ -40,6 +41,7 @@ const session = require('koa-session');
 const YandexStrategy = require('passport-yandex').Strategy;
 
 // AUTH
+const User = new UsersModel();
 app.keys = ['secret'];
 app.use(session({}, app));
 
@@ -59,25 +61,38 @@ passport.use(new YandexStrategy(
 		callbackURL: YANDEX_CALLBACK_URL,
 	},
 	((accessToken, refreshToken, profile, done) => {
-		// assign kept in memory user to profile, returned from oauth
-		// for a real app, user must be put in the database
-		// e.g. User.createOrUpdate(profile)
-		done(null, profile);
+		User.findOrCreate(
+			{yandex_id: profile.id},
+			{
+				username: profile.username,
+				yandex_id: profile.id,
+				realName: profile.displayName,
+				email: profile.emails[0].value,
+				avatar_id: profile._json.default_avatar_id,
+			}
+		).then((recieved) => {
+			done(null, recieved);
+		});
 	})
 ));
 
 passport.serializeUser((user, done) => {
-	// for a real app, an ID should be serialzed
-	done(null, JSON.stringify(user));
+	done(null, user.yandex_id);
 });
 
-passport.deserializeUser((data, done) => {
-	// for a real app, a user must be found in a database
-	// e.g. User.find(data)
+passport.deserializeUser(async (id, done) => {
+	// terminate existing sessions
+	const userId = Number(id);
+	if (!id || isNaN(id)) {
+		done(null, null);
+		return;
+	}
+
 	try {
-		done(null, JSON.parse(data));
-	} catch (err) {
-		done(err);
+		const user = await User.getBy({yandex_id: userId});
+		done(null, user);
+	} catch (error) {
+		done(error, null);
 	}
 });
 
@@ -88,7 +103,7 @@ router.get(
 
 router.get(
 	'/auth/yandex/callback',
-	passport.authenticate('yandex'),
+	passport.authenticate('yandex', {failureRedirect: '/blya'}),
 	(ctx) => {
 		// Successful authentication, redirect home.
 		ctx.redirect('/');
@@ -111,9 +126,9 @@ async function getData(ctx) {
 	if (user) {
 		loggedIn = {
 			login: user.username,
-			name: `${user.name.givenName} ${user.name.familyName}`,
-			mail: user.emails[0],
-			avatar_url: `https://avatars.yandex.net/get-yapic/${user._json.default_avatar_id}/islands-200`,
+			name: user.realName,
+			mail: user.email,
+			avatar_url: `https://avatars.yandex.net/get-yapic/${user.avatar_id}/islands-200`,
 		};
 	}
 
@@ -139,6 +154,8 @@ router.get('/', async (ctx) => {
 	const data = await getData(ctx);
 	const indexView = getView('index');
 	const indexViewHtml = renderToStaticMarkup(indexView(data));
+
+	console.log(ctx.state.user);
 
 	ctx.body = indexViewHtml;
 });
