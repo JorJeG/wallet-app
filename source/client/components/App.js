@@ -157,8 +157,7 @@ class App extends Component {
 	* Функция вызывает при успешной транзакции
 	*/
 	onTransaction() {
-		const {_id} = this.props.data.savedUser;
-		axios.get(`/cards/${_id}`).then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({cardsList});
 
@@ -173,8 +172,7 @@ class App extends Component {
 	* Функция вызывает при успешном добавлении карты
 	*/
 	onAdd() {
-		const {_id} = this.props.data.savedUser;
-		axios.get(`/cards/${_id}`).then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({cardsList, isCardAdding: false});
 		}).then(() => this.onTransaction());
@@ -184,8 +182,7 @@ class App extends Component {
 	* Функция вызывает при успешном удалении карты
 	*/
 	onDelete() {
-		const {_id} = this.props.data.savedUser;
-		axios.get(`/cards/${_id}`).then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			this.setState({
 				cardsList,
@@ -218,8 +215,7 @@ class App extends Component {
 	}
 
 	checkEmpty() {
-		const {_id} = this.props.data.savedUser;
-		axios.get(`/cards/${_id}`).then(({data}) => {
+		axios.get(`/cards/`).then(({data}) => {
 			const cardsList = App.prepareCardsData(data);
 			if (cardsList.length === 0) {
 				this.setState({

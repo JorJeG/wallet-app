@@ -156,7 +156,6 @@ router.get('/logout', (ctx) => {
 
 // Сохраним параметр id в ctx.params.id
 router.param('id', (id, ctx, next) => next());
-router.param('user', (id, ctx, next) => next());
 
 router.get('/', async (ctx) => {
 	const data = await getData(ctx);
@@ -174,7 +173,7 @@ const registeredOnly = async (ctx, controllerAction) => {
 	ctx.body = 403;
 };
 
-router.get('/cards/:user', (ctx) => registeredOnly(ctx, getCardsController));
+router.get('/cards/', (ctx) => registeredOnly(ctx, getCardsController));
 
 router.post('/cards/', (ctx) => registeredOnly(ctx, createCardController));
 router.delete('/cards/:id', (ctx) => registeredOnly(ctx, deleteCardController));
