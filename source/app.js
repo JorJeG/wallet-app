@@ -25,6 +25,7 @@ const errorController = require('./controllers/error');
 const ApplicationError = require('libs/application-error');
 const CardsModel = require('source/models/cards');
 const TransactionsModel = require('source/models/transactions');
+const UserModel = require('source/models/users');
 
 const getTransactionsController = require('./controllers/transactions/get-transactions');
 
@@ -42,6 +43,7 @@ const YandexStrategy = require('passport-yandex').Strategy;
 // AUTH
 app.keys = ['secret'];
 app.use(session({}, app));
+app.proxy = true;
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -106,6 +108,9 @@ function getView(viewId) {
 async function getData(ctx) {
 	let loggedIn = null;
 	const user = ctx.state.user;
+	let cards = await ctx.cardsModel.getAll();
+	let transactions = await ctx.transactionsModel.getAll({time: -1});
+	let savedUser = null;
 
 	// user from memory
 	if (user) {
@@ -115,15 +120,20 @@ async function getData(ctx) {
 			mail: user.emails[0],
 			avatar_url: `https://avatars.yandex.net/get-yapic/${user._json.default_avatar_id}/islands-200`,
 		};
+		savedUser = await ctx.userModel.getBy({login: loggedIn.login});
+		if (!savedUser) {
+			savedUser = await ctx.userModel.create(loggedIn);
+		}
+		cards = await ctx.cardsModel.getAllWhere(savedUser._id);
+		transactions = await ctx.transactionsModel.getAllWhere(savedUser._id, {time: -1});
 	}
 
-	const cards = await ctx.cardsModel.getAll();
-	const transactions = await ctx.transactionsModel.getAll({time: -1});
 
 	return {
 		user: loggedIn,
 		cards,
-		transactions
+		transactions,
+		savedUser
 	};
 }
 
@@ -134,6 +144,7 @@ router.get('/logout', (ctx) => {
 
 // Сохраним параметр id в ctx.params.id
 router.param('id', (id, ctx, next) => next());
+router.param('user', (id, ctx, next) => next());
 
 router.get('/', async (ctx) => {
 	const data = await getData(ctx);
@@ -151,7 +162,7 @@ const registeredOnly = async (ctx, controllerAction) => {
 	ctx.body = 403;
 };
 
-router.get('/cards/', (ctx) => registeredOnly(ctx, getCardsController));
+router.get('/cards/:user', (ctx) => registeredOnly(ctx, getCardsController));
 
 router.post('/cards/', (ctx) => registeredOnly(ctx, createCardController));
 router.delete('/cards/:id', (ctx) => registeredOnly(ctx, deleteCardController));
@@ -190,7 +201,7 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
 	ctx.cardsModel = new CardsModel();
 	ctx.transactionsModel = new TransactionsModel();
-
+	ctx.userModel = new UserModel();
 	await next();
 });
 

@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = async (ctx) => {
-	ctx.body = await ctx.cardsModel.getAll();
+	const userId = ctx.params.user;
+	ctx.body = await ctx.cardsModel.getAllWhere(userId);
 };

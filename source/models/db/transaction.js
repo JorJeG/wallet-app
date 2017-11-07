@@ -12,7 +12,11 @@ const Transaction = mongoose.model('Transaction', {
   id: {
     type: Number,
     required: true
-  }
+  },
+	owner: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true
+	}
 });
 
 module.exports = Transaction;
