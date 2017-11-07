@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const UsersModel = require('./../source/models/users');
 const CardsModel = require('./../source/models/cards');
-const TransactionsModel = require('./../source/models/transactions');
+
 const axios = require('axios');
 const CardInfo = require('card-info');
 
@@ -20,17 +20,15 @@ let chats = [];
 function showCards(userId, userCardsId, allCards, mess) {
 	let message = '';
 	let count = 1;
-	allCards.forEach((card) => {
-		if (userCardsId.includes(card.id)) {
-			const cardinfo = new CardInfo(card.cardNumber);
-			message += `${count}  ${card.cardNumber} (${cardinfo.bankName})\n`;
+	userCardsId.forEach((card) => {
+		const cardinfo = new CardInfo(card.cardNumber);
+		message += `${count}  ${card.cardNumber} (${cardinfo.bankName})\n`;
 
-			if (!chats[userId].options) {
-				chats[userId].options = {};
-			}
-			chats[userId].options[String(count)] = [card.cardNumber, cardinfo.bankName];
-			count += 1;
+		if (!chats[userId].options) {
+			chats[userId].options = {};
 		}
+		chats[userId].options[String(count)] = [card.cardNumber, cardinfo.bankName];
+		count += 1;
 	});
 
 	chats[userId].lastMsg = `${mess}\n${message}`;
@@ -44,7 +42,8 @@ Bot.onText(/^\/balance/, async (msg, match) => {
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
 	if (user) {
-		const userCardsId = user.card_id;
+		const userCardsId = await cardsModel.getAllWhere(user._id);
+		Bot.sendMessage(userId, userCardsId);
 
 		const allCards = await cardsModel.getAll();
 		showCards(userId, userCardsId, allCards, 'Выберите карту:');
@@ -63,9 +62,9 @@ Bot.onText(/^\/cardToMobile (.+)/, async (msg, match) => {
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
 	if (user) {
-		const userCardsId = cardsModel.getBy({owner: user._id});//user.card_id;
+		const userCardsId = await cardsModel.getAllWhere(user._id);
 		chats[userId].sum = match[1];
-		chats[userId].phoneNumber = user.phoneNumber;
+		chats[userId].phoneNumber = user.phoneNumbers[0];
 
 		const allCards = await cardsModel.getAll();
 		showCards(userId, userCardsId, allCards, 'Выберите карту, с которой произвести перевод на мобильный телефон:');
@@ -84,7 +83,7 @@ Bot.onText(/^\/cardToCard (.+)/, async (msg, match) => {
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
 	if (user) {
-		const userCardsId = user.card_id;
+		const userCardsId = await cardsModel.getAllWhere(user._id);
 		chats[userId].sum = match[1];
 
 		const allCards = await cardsModel.getAll();
@@ -105,9 +104,9 @@ Bot.onText(/^\/mobileToCard (.+)/, async (msg, match) => {
 	}
 	const user = await usersModel.getBy({telegram_id: userId});
 	if (user) {
-		const userCardsId = user.card_id;
+		const userCardsId = await cardsModel.getAllWhere(user._id);
 		chats[userId].sum = match[1];
-		chats[userId].phoneNumber = user.phoneNumber;
+		chats[userId].phoneNumber = user.phoneNumbers[0];
 
 		const allCards = await cardsModel.getAll();
 		showCards(userId, userCardsId, allCards, 'Выберите карту, на которую произвести перевод:');
@@ -133,6 +132,7 @@ Bot.onText(/^\/help/, (msg) => {
 
 Bot.on('message', async (msg) => {
 	const userId = msg.chat.id;
+	const user = await usersModel.getBy({telegram_id: userId});
 	if (chats[userId]) {
 		if (chats[userId].operator === 'balance') {
 			if (chats[userId].options[msg.text]) {
@@ -148,7 +148,7 @@ Bot.on('message', async (msg) => {
 		else if (chats[userId].operator === 'cardToMobile') {
 			if (chats[userId].options[msg.text]) {
 				const card = await cardsModel.getBy({cardNumber: chats[userId].options[msg.text][0]});
-				await axiosInstance.post(`/cards/${card.id}/pay`, {phoneNumber: chats[userId].phoneNumber, sum: chats[userId].sum, mail: '', mailing: ''});
+				await axiosInstance.post(`/cards/${card.id}/pay`, {phoneNumber: chats[userId].phoneNumber, sum: chats[userId].sum, _id: user._id, mail: '', mailing: ''});
 				chats[userId].operator = '';
 			}
 			else {
@@ -166,7 +166,7 @@ Bot.on('message', async (msg) => {
 				await axiosInstance.post(
 					`/cards/${card.id}/transfer`,
 					{
-						target: selectedCard.id, sum: chats[userId].sum, mail: '', mailing: ''
+						target: selectedCard.id, sum: chats[userId].sum, _id: user._id, mail: '', mailing: ''
 					}
 				);
 				chats[userId].operator = '';
@@ -178,7 +178,7 @@ Bot.on('message', async (msg) => {
 		else if (chats[userId].operator === 'mobileToCard') {
 			if (chats[userId].options[msg.text]) {
 				const card = await cardsModel.getBy({cardNumber: chats[userId].options[msg.text][0]});
-				await axiosInstance.post(`/cards/${card.id}/fill`, {phoneNumber: chats[userId].phoneNumber, sum: chats[userId].sum, mail: '', mailing: ''});
+				await axiosInstance.post(`/cards/${card.id}/fill`, {phoneNumber: chats[userId].phoneNumber, sum: chats[userId].sum, _id: user._id, mail: '', mailing: ''});
 				chats[userId].operator = '';
 			}
 			else {
