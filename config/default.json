@@ -7,8 +7,8 @@
     "url": "mongodb://localhost/school-wallet"
 	},
 	"oauth": {
-		"YANDEX_CLIENT_ID": "f5ec466c79f84b9cba83892115509f5e",
-		"YANDEX_CLIENT_SECRET": "0658badbc2e948a091a69cb967f653aa",
+		"YANDEX_CLIENT_ID": "718ded6710d844a7ae6169103a57d5ae",
+		"YANDEX_CLIENT_SECRET": "32b5fb808d5c445eba245e0c759f384b",
 		"YANDEX_CALLBACK_URL": "http://localhost:3001/auth/yandex/callback"
 	}
 }
