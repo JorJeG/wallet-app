@@ -4,6 +4,11 @@
     "serve_static_files": true
   },
   "db": {
-    "url": "mongodb://localhost/wallet-app"
-  }
+    "url": "mongodb://localhost/school-wallet"
+	},
+	"oauth": {
+		"YANDEX_CLIENT_ID": "f5ec466c79f84b9cba83892115509f5e",
+		"YANDEX_CLIENT_SECRET": "0658badbc2e948a091a69cb967f653aa",
+		"YANDEX_CALLBACK_URL": "http://localhost:3001/auth/yandex/callback"
+	}
 }

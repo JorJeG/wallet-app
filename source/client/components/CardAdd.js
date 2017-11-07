@@ -136,13 +136,13 @@ class CardAdd extends Component {
 		}
 
 		const {name, value} = event.target;
-		const formattedValue = value.replace(/\s/g, '');
+		// const value.replace(/\s/g, '') = value.replace(/\s/g, '');
 
-		if (formattedValue.length > 16 || value.match(/[^0-9|\s]/g)) {
+		if (value.replace(/\s/g, '').length > 16 || value.match(/[^0-9|\s]/g)) {
 			return;
 		}
 		// disabled/enabled button
-		if (formattedValue.length === 16 && !this.state.invalid) {
+		if (value.replace(/\s/g, '').length === 16 && !this.state.invalid) {
 			this.setState({
 				isCompleted: true
 			});
@@ -152,12 +152,12 @@ class CardAdd extends Component {
 			});
 		}
 		// Карточка получает тему только если валидна
-		if (formattedValue.length <= 5) {
+		if (value.replace(/\s/g, '').length <= 5) {
 			this.setState({
 				invalid: true
 			});
 		}
-		if (formattedValue.length > 5) {
+		if (value.replace(/\s/g, '').length > 5) {
 			if (CardAdd.prepareCardsData(value).bankName === null) {
 				this.setState({
 					invalid: true
@@ -221,7 +221,7 @@ class CardAdd extends Component {
 					<Button
 						bgColor='#d3292a'
 						textColor='#fff'
-						disabled={!isCompleted}
+						/* disabled={!isCompleted} */
 						onClick={() => this.createCard()}>
 						Добавить
 					</Button>
