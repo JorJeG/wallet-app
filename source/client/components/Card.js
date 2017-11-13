@@ -40,6 +40,10 @@ const CardType = styled.div`
 `;
 
 const NewCardLayout = styled(CardLayout)`
+	position: relative;
+	width: 275px;
+	height: 164px;
+	margin-left: 10px;
 	background-color: transparent;
 	background-image: url('/assets/cards-add.svg');
 	background-repeat: no-repeat;

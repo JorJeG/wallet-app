@@ -2,6 +2,7 @@
 	"presets": ["env", "es2015", "react"],
 	"plugins": [
 		"emotion",
-		["import", {libraryName: "antd", style: "css"}]
+		["transform-class-properties", { "spec": true }],
+		["import", {"libraryName": "antd", "style": "css"}]
 	]
 }
